@@ -9,7 +9,8 @@ async function main() {
       {
         title: 'E-Commerce Platform',
         slug: 'ecommerce-platform',
-        description: 'A full-stack e-commerce platform built with Next.js and Node.js',
+        description:
+          'A full-stack e-commerce platform built with Next.js and Node.js',
         imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d',
         link: 'https://ecommerce-demo.com',
         githubUrl: 'https://github.com/user/ecommerce',
@@ -19,8 +20,10 @@ async function main() {
       {
         title: 'Task Management App',
         slug: 'task-management-app',
-        description: 'A collaborative task management application with real-time updates',
-        imageUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71',
+        description:
+          'A collaborative task management application with real-time updates',
+        imageUrl:
+          'https://images.unsplash.com/photo-1611224923853-80b023f02d71',
         link: 'https://taskapp-demo.com',
         githubUrl: 'https://github.com/user/taskapp',
         technologies: ['React', 'Node.js', 'Socket.io', 'MongoDB'],
@@ -50,7 +53,8 @@ async function main() {
         role: 'Senior Full Stack Developer',
         startDate: new Date('2022-01-01'),
         endDate: new Date('2024-01-01'),
-        description: 'Led development of multiple web applications using React and Node.js',
+        description:
+          'Led development of multiple web applications using React and Node.js',
         current: false,
         order: 1,
       },
@@ -58,7 +62,8 @@ async function main() {
         company: 'StartupXYZ',
         role: 'Lead Developer',
         startDate: new Date('2024-01-01'),
-        description: 'Building scalable web applications and mentoring junior developers',
+        description:
+          'Building scalable web applications and mentoring junior developers',
         current: true,
         order: 2,
       },
@@ -69,11 +74,10 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error(e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
-
