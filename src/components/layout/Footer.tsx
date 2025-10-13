@@ -4,7 +4,7 @@ export function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-gray-400">
-            © 2024 Monther Alzamli. All rights reserved.
+            © 2025 Eng Monther Alzamli. All rights reserved.
           </p>
         </div>
       </div>

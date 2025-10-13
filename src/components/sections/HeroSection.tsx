@@ -1,85 +1,145 @@
 'use client';
 
-import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowDown, Github, Linkedin, Mail, Download } from 'lucide-react';
 
 export function HeroSection() {
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-purple-50 dark:from-gray-900 dark:to-gray-800"
+      className="min-h-screen flex items-center justify-center bg-background-primary relative overflow-hidden pt-20"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Image */}
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-1">
-              <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
-                <span className="text-4xl font-bold gradient-text">MA</span>
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-300/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Content */}
+            <div className="order-2 lg:order-1 text-left lg:text-left">
+              <div className="mb-6">
+                <span className="inline-block px-4 py-2 bg-background-secondary text-text-secondary rounded-full text-sm font-semibold border border-border-primary">
+                  Hello, I'm
+                </span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-bold text-text-primary mb-6 leading-tight">
+                <span className="block">Monther</span>
+                <span className="block text-primary-400">
+                  Alzamli
+                </span>
+              </h1>
+
+              <div className="mb-8">
+                <h2 className="text-2xl md:text-3xl font-semibold text-text-primary mb-4">
+                  Full Stack Developer
+                </h2>
+                <p className="text-lg md:text-xl text-text-secondary leading-relaxed max-w-2xl">
+                  I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.
+                </p>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <a
+                  href="#projects"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-primary-400 text-white font-semibold rounded-xl hover:bg-primary-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary-400/25"
+                >
+                  <span>View My Work</span>
+                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200" />
+                </a>
+                <a
+                  href="#contact"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-background-secondary text-text-primary font-semibold rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <span>Get In Touch</span>
+                  <Mail className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+                </a>
+              </div>
+
+              {/* Social Links */}
+              <div className="flex items-center gap-6">
+                <span className="text-sm text-text-secondary font-medium">Follow me:</span>
+                <div className="flex gap-4">
+                  <a
+                    href="https://github.com/MontherIsmail"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/monther-alzamli/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                  </a>
+                  <a
+                    href="mailto:montherismail90@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    
+                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Profile Image */}
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+              <div className="relative">
+                {/* Main image container */}
+                <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+                  {/* Border */}
+                  <div className="absolute inset-0 bg-primary-400 rounded-3xl p-1">
+                    <div className="w-full h-full bg-background-primary rounded-3xl p-2">
+                      {/* Image container */}
+                      <div className="w-full h-full rounded-2xl overflow-hidden bg-background-secondary">
+                        <img
+                          src="/profile-image.jpg"
+                          alt="Monther Alzamli"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating elements */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary-400 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
+                    <span className="text-white font-bold text-lg">Dev</span>
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center shadow-lg animate-pulse" style={{ animationDelay: '1s' }}>
+                    <span className="text-white font-bold text-lg">Code</span>
+                  </div>
+                </div>
+
+                {/* Background decoration */}
+                <div className="absolute inset-0 -z-10">
+                  <div className="w-full h-full bg-primary-400/10 rounded-3xl blur-2xl scale-110"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            Hi, I'm <span className="gradient-text">Monther Alzamli</span>
-          </h1>
-
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            Full Stack Developer specializing in React, Next.js, and modern web
-            technologies. I create beautiful, functional, and user-centered
-            digital experiences.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <a
-              href="#projects"
-              className="btn-primary inline-flex items-center justify-center px-8 py-3 text-lg"
-            >
-              View My Work
-            </a>
-            <a
-              href="#contact"
-              className="btn-secondary inline-flex items-center justify-center px-8 py-3 text-lg"
-            >
-              Get In Touch
-            </a>
-          </div>
-
-          {/* Social Links */}
-          <div className="flex justify-center space-x-6 mb-12">
-            <a
-              href="https://github.com/MontherIsmail"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-600 hover:text-primary-600 transition-colors duration-200 dark:text-gray-400 dark:hover:text-primary-400"
-            >
-              <Github size={24} />
-            </a>
-            <a
-              href="https://linkedin.com/in/MontherAlzamli"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-600 hover:text-primary-600 transition-colors duration-200 dark:text-gray-400 dark:hover:text-primary-400"
-            >
-              <Linkedin size={24} />
-            </a>
-            <a
-              href="mailto:monther@example.com"
-              className="text-gray-600 hover:text-primary-600 transition-colors duration-200 dark:text-gray-400 dark:hover:text-primary-400"
-            >
-              <Mail size={24} />
-            </a>
-          </div>
-
           {/* Scroll Indicator */}
-          <div className="animate-bounce-slow">
-            <a
-              href="#about"
-              className="text-gray-400 hover:text-primary-600 transition-colors duration-200"
-            >
-              <ArrowDown size={24} />
-            </a>
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div className="animate-bounce">
+              <a
+                href="#about"
+                className="group flex flex-col items-center text-text-secondary hover:text-primary-400 transition-colors duration-200"
+              >
+                <span className="text-sm font-medium mb-2">Scroll to explore</span>
+                <ArrowDown className="h-6 w-6 group-hover:translate-y-1 transition-transform duration-200" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
