@@ -1,3 +1,8 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Calendar, MapPin, Briefcase } from 'lucide-react';
+
 type Experience = {
   id: string;
   company: string;
@@ -9,25 +14,43 @@ type Experience = {
   order: number;
 };
 
-async function getExperience(): Promise<Experience[]> {
-  try {
-    const res = await fetch('/api/experience?limit=20', { cache: 'no-store' });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data ?? [];
-  } catch {
-    return [];
-  }
-}
+export function ExperienceSection() {
+  const [items, setItems] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export async function ExperienceSection() {
-  const items = await getExperience();
+  useEffect(() => {
+    const fetchExperience = async () => {
+      try {
+        const res = await fetch('/api/experience?limit=20', { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          setItems(json?.data ?? []);
+        }
+      } catch (error) {
+        console.error('Error fetching experience:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperience();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="experience" className="py-20 bg-background-primary">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-400 mx-auto mb-4"></div>
+            <p className="text-text-secondary">Loading experience...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section
-      id="experience"
-      className="py-20 bg-background-primary"
-    >
+    <section id="experience" className="py-20 bg-background-primary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="inline-block">
@@ -44,9 +67,7 @@ export async function ExperienceSection() {
         {items.length === 0 ? (
           <div className="text-center py-20">
             <div className="bg-background-secondary rounded-2xl p-8 max-w-md mx-auto border border-border-primary">
-              <p className="text-lg text-text-secondary">
-                No experience yet.
-              </p>
+              <p className="text-lg text-text-secondary">No experience yet.</p>
             </div>
           </div>
         ) : (
@@ -56,19 +77,19 @@ export async function ExperienceSection() {
 
             <div className="space-y-8">
               {items
-                .sort(
-                  (a, b) =>
-                    a.order - b.order ||
-                    new Date(b.startDate).getTime() -
-                      new Date(a.startDate).getTime()
-                )
+                .sort((a, b) => {
+                  // Sort by startDate with newest first
+                  const dateA = new Date(a.startDate).getTime();
+                  const dateB = new Date(b.startDate).getTime();
+                  return dateB - dateA;
+                })
                 .map((e, index) => (
                   <div key={e.id} className="relative flex items-start group">
                     {/* Timeline dot */}
                     <div className="absolute left-6 top-6 flex h-4 w-4 items-center justify-center rounded-full bg-primary-400 ring-8 ring-background-primary group-hover:scale-125 transition-transform duration-300">
                       <div className="h-2 w-2 rounded-full bg-white"></div>
                     </div>
-                    
+
                     {/* Content card */}
                     <div className="ml-16 bg-background-secondary rounded-2xl p-6 border border-border-primary hover:border-primary-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex-1">
                       <div className="flex items-start justify-between mb-4">
@@ -93,7 +114,7 @@ export async function ExperienceSection() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="mb-4">
                         <time className="text-sm font-medium text-text-secondary">
                           {new Date(e.startDate).toLocaleDateString('en-US', {
@@ -114,7 +135,7 @@ export async function ExperienceSection() {
                               : 'N/A'}
                         </time>
                       </div>
-                      
+
                       <p className="text-text-secondary leading-relaxed">
                         {e.description}
                       </p>

@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
 type Skill = {
   id: string;
   name: string;
@@ -7,26 +11,44 @@ type Skill = {
   order: number;
 };
 
-async function getSkills(): Promise<Skill[]> {
-  try {
-    const res = await fetch('/api/skills?limit=100', { cache: 'no-store' });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data ?? [];
-  } catch {
-    return [];
-  }
-}
+export function SkillsSection() {
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export async function SkillsSection() {
-  const skills = await getSkills();
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await fetch('/api/skills?limit=100', { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          setSkills(json?.data ?? []);
+        }
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="skills" className="py-20 bg-background-primary">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-400 mx-auto mb-4"></div>
+            <p className="text-text-secondary">Loading skills...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
   const categories = Array.from(new Set(skills.map(s => s.category)));
 
   return (
-    <section
-      id="skills"
-      className="py-20 bg-background-primary"
-    >
+    <section id="skills" className="py-20 bg-background-primary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="inline-block">
@@ -43,9 +65,7 @@ export async function SkillsSection() {
         {skills.length === 0 ? (
           <div className="text-center py-20">
             <div className="bg-background-secondary rounded-2xl p-8 max-w-md mx-auto border border-border-primary">
-              <p className="text-lg text-text-secondary">
-                No skills yet.
-              </p>
+              <p className="text-lg text-text-secondary">No skills yet.</p>
             </div>
           </div>
         ) : (

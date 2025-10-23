@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
+// Helper function to generate slug
+const generateSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 // Validation schemas
 const ProjectSchema = z.object({
   title: z
@@ -11,7 +19,8 @@ const ProjectSchema = z.object({
   slug: z
     .string()
     .min(1, 'Slug is required')
-    .max(100, 'Slug must be less than 100 characters'),
+    .max(100, 'Slug must be less than 100 characters')
+    .optional(),
   description: z
     .string()
     .min(1, 'Description is required')
@@ -20,7 +29,7 @@ const ProjectSchema = z.object({
   link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   githubUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   technologies: z
-    .array(z.string())
+    .string()
     .min(1, 'At least one technology is required'),
   featured: z.boolean().optional().default(false),
 });
@@ -47,7 +56,7 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
-        { technologies: { has: search } },
+        { technologies: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -88,9 +97,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = ProjectSchema.parse(body);
 
+    // Generate slug if not provided
+    const slug = validatedData.slug || generateSlug(validatedData.title);
+
     // Check if slug already exists
     const existingProject = await prisma.project.findUnique({
-      where: { slug: validatedData.slug },
+      where: { slug },
     });
 
     if (existingProject) {
@@ -101,7 +113,10 @@ export async function POST(request: NextRequest) {
     }
 
     const project = await prisma.project.create({
-      data: validatedData,
+      data: {
+        ...validatedData,
+        slug,
+      },
     });
 
     return NextResponse.json(

@@ -1,0 +1,709 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Search,
+  Filter,
+  Upload,
+  X,
+  Save,
+  Loader2,
+  CheckSquare,
+  Square,
+  Download,
+} from 'lucide-react';
+
+interface Project {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  imageUrl: string;
+  link?: string;
+  githubUrl?: string;
+  technologies: string;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ProjectFormData {
+  title: string;
+  description: string;
+  imageUrl: string;
+  link: string;
+  githubUrl: string;
+  technologies: string;
+  featured: boolean;
+}
+
+export default function ProjectsTab() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [formData, setFormData] = useState<ProjectFormData>({
+    title: '',
+    description: '',
+    imageUrl: '',
+    link: '',
+    githubUrl: '',
+    technologies: '',
+    featured: false,
+  });
+  const [formLoading, setFormLoading] = useState(false);
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
+  const [bulkLoading, setBulkLoading] = useState(false);
+
+  // Fetch projects
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch('/api/projects', { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setError('');
+
+    try {
+      const url = editingProject
+        ? `/api/projects/${editingProject.id}`
+        : '/api/projects';
+
+      const method = editingProject ? 'PUT' : 'POST';
+
+      const submitData = {
+        ...formData,
+        slug: editingProject ? editingProject.slug : generateSlug(formData.title),
+      };
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      if (response.ok) {
+        await fetchProjects();
+        resetForm();
+        // Show success notification
+        Swal.fire({
+          title: 'Success!',
+          text: editingProject ? 'Project updated successfully!' : 'Project created successfully!',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          color: '#e2e8f0',
+          background: '#1e293b',
+          confirmButtonColor: '#3b82f6'
+        });
+      } else {
+        const errorData = await response.json();
+        // Show error notification
+        Swal.fire({
+          title: 'Error!',
+          text: errorData.error || 'An error occurred',
+          icon: 'error',
+          color: '#e2e8f0',
+          background: '#1e293b',
+          confirmButtonColor: '#ef4444'
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Network error occurred',
+        icon: 'error',
+        color: '#e2e8f0',
+        background: '#1e293b',
+        confirmButtonColor: '#ef4444'
+      });
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      color: '#e2e8f0',
+      background: '#1e293b'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        await fetchProjects();
+        // Show success notification
+        Swal.fire({
+          title: 'Success!',
+          text: 'Project deleted successfully!',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          color: '#e2e8f0',
+          background: '#1e293b',
+          confirmButtonColor: '#3b82f6'
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  };
+
+  const handleEdit = (project: Project) => {
+    setEditingProject(project);
+    setFormData({
+      title: project.title,
+      description: project.description,
+      imageUrl: project.imageUrl,
+      link: project.link || '',
+      githubUrl: project.githubUrl || '',
+      technologies: project.technologies,
+      featured: project.featured,
+    });
+    setShowForm(true);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      imageUrl: '',
+      link: '',
+      githubUrl: '',
+      technologies: '',
+      featured: false,
+    });
+    setEditingProject(null);
+    setShowForm(false);
+    setError('');
+  };
+
+  const addTechnology = (tech: string) => {
+    if (tech.trim()) {
+      const currentTechs = formData.technologies ? formData.technologies.split(',').map(t => t.trim()) : [];
+      if (!currentTechs.includes(tech.trim())) {
+        const newTechs = [...currentTechs, tech.trim()];
+        setFormData(prev => ({
+          ...prev,
+          technologies: newTechs.join(', '),
+        }));
+      }
+    }
+  };
+
+  const removeTechnology = (tech: string) => {
+    const currentTechs = formData.technologies ? formData.technologies.split(',').map(t => t.trim()) : [];
+    const newTechs = currentTechs.filter(t => t !== tech);
+    setFormData(prev => ({
+      ...prev,
+      technologies: newTechs.join(', '),
+    }));
+  };
+
+  // Bulk operations
+  const handleSelectAll = () => {
+    if (selectedProjects.length === filteredProjects.length) {
+      setSelectedProjects([]);
+    } else {
+      setSelectedProjects(filteredProjects.map(p => p.id));
+    }
+  };
+
+  const handleSelectProject = (projectId: string) => {
+    setSelectedProjects(prev =>
+      prev.includes(projectId)
+        ? prev.filter(id => id !== projectId)
+        : [...prev, projectId]
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedProjects.length === 0) return;
+    
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete ${selectedProjects.length} project(s). This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete them!',
+      cancelButtonText: 'Cancel',
+      color: '#e2e8f0',
+      background: '#1e293b'
+    });
+
+    if (!result.isConfirmed) return;
+
+    setBulkLoading(true);
+    try {
+      await Promise.all(
+        selectedProjects.map(id =>
+          fetch(`/api/projects/${id}`, { method: 'DELETE' })
+        )
+      );
+      await fetchProjects();
+      setSelectedProjects([]);
+      // Show success notification
+      Swal.fire({
+        title: 'Success!',
+        text: `${selectedProjects.length} project(s) deleted successfully!`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+        color: '#e2e8f0',
+        background: '#1e293b',
+        confirmButtonColor: '#3b82f6'
+      });
+    } catch (error) {
+      console.error('Error deleting projects:', error);
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleExportData = () => {
+    const dataStr = JSON.stringify(filteredProjects, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'projects-data.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const filteredProjects = projects.filter(
+    project =>
+      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.technologies.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-text-primary">
+          Project Management
+        </h2>
+        <div className="flex items-center space-x-3">
+          {selectedProjects.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-text-secondary">
+                {selectedProjects.length} selected
+              </span>
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkLoading}
+                className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+              >
+                {bulkLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </button>
+            </div>
+          )}
+          <button
+            onClick={handleExportData}
+            className="flex items-center px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </button>
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Project
+          </button>
+        </div>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex items-center space-x-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-text-secondary" />
+          <input
+            type="text"
+            placeholder="Search projects..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+          />
+        </div>
+        <button className="flex items-center px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors">
+          <Filter className="h-4 w-4 mr-2" />
+          Filter
+        </button>
+      </div>
+
+      {/* Projects Grid */}
+      <div className="space-y-4">
+        {/* Select All */}
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleSelectAll}
+            className="flex items-center space-x-2 text-text-secondary hover:text-text-primary transition-colors"
+          >
+            {selectedProjects.length === filteredProjects.length ? (
+              <CheckSquare className="h-5 w-5" />
+            ) : (
+              <Square className="h-5 w-5" />
+            )}
+            <span className="text-sm">
+              {selectedProjects.length === filteredProjects.length ? 'Deselect All' : 'Select All'}
+            </span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProjects.map(project => (
+          <div
+            key={project.id}
+            className="bg-background-secondary rounded-xl border border-border-primary overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            <div className="aspect-video bg-background-primary relative">
+              <img
+                src={project.imageUrl}
+                alt={project.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                }}
+              />
+              <div className="absolute top-3 left-3">
+                <button
+                  onClick={() => handleSelectProject(project.id)}
+                  className="text-white hover:text-primary-400 transition-colors"
+                >
+                  {selectedProjects.includes(project.id) ? (
+                    <CheckSquare className="h-5 w-5" />
+                  ) : (
+                    <Square className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-lg font-semibold text-text-primary">
+                  {project.title}
+                </h3>
+                {project.featured && (
+                  <span className="px-2 py-1 bg-primary-400 text-white text-xs rounded-full">
+                    Featured
+                  </span>
+                )}
+              </div>
+              <p className="text-text-secondary text-sm mb-4 line-clamp-2">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {project.technologies.split(',').slice(0, 3).map(tech => (
+                  <span
+                    key={tech.trim()}
+                    className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded"
+                  >
+                    {tech.trim()}
+                  </span>
+                ))}
+                {project.technologies.split(',').length > 3 && (
+                  <span className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded">
+                    +{project.technologies.split(',').length - 3} more
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleEdit(project)}
+                  className="flex items-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors"
+                >
+                  <Edit className="h-3 w-3 mr-1" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(project.id)}
+                  className="flex items-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete
+                </button>
+                <button className="flex items-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors">
+                  <Eye className="h-3 w-3 mr-1" />
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        </div>
+      </div>
+
+      {filteredProjects.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-text-secondary">No projects found</p>
+        </div>
+      )}
+
+      {/* Project Form Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background-secondary rounded-xl border border-border-primary w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-border-primary">
+              <h3 className="text-xl font-semibold text-text-primary">
+                {editingProject ? 'Edit Project' : 'Add New Project'}
+              </h3>
+              <button
+                onClick={resetForm}
+                className="text-text-secondary hover:text-text-primary"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-2">
+                    Project Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={e =>
+                      setFormData(prev => ({ ...prev, title: e.target.value }))
+                    }
+                    className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-2">
+                    Image URL *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    value={formData.imageUrl}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        imageUrl: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Description *
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={formData.description}
+                  onChange={e =>
+                    setFormData(prev => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-2">
+                    Live Demo URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.link}
+                    onChange={e =>
+                      setFormData(prev => ({ ...prev, link: e.target.value }))
+                    }
+                    className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-2">
+                    GitHub URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.githubUrl}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        githubUrl: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Technologies
+                </label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {formData.technologies.split(',').map(tech => (
+                    tech.trim() && (
+                      <span
+                        key={tech.trim()}
+                        className="flex items-center px-3 py-1 bg-primary-400 text-white rounded-full text-sm"
+                      >
+                        {tech.trim()}
+                        <button
+                          type="button"
+                          onClick={() => removeTechnology(tech.trim())}
+                          className="ml-2 hover:text-red-200"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    )
+                  ))}
+                </div>
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    placeholder="Add technology..."
+                    className="flex-1 px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                    onKeyPress={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addTechnology(e.currentTarget.value);
+                        e.currentTarget.value = '';
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={e => {
+                      const input = e.currentTarget
+                        .previousElementSibling as HTMLInputElement;
+                      addTechnology(input.value);
+                      input.value = '';
+                    }}
+                    className="px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={e =>
+                    setFormData(prev => ({
+                      ...prev,
+                      featured: e.target.checked,
+                    }))
+                  }
+                  className="h-4 w-4 text-primary-400 focus:ring-primary-400 border-border-primary rounded"
+                />
+                <label
+                  htmlFor="featured"
+                  className="ml-2 text-sm text-text-primary"
+                >
+                  Featured Project
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-border-primary">
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-4 py-2 bg-background-primary border border-border-primary text-text-primary rounded-lg hover:bg-background-secondary transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formLoading}
+                  className="flex items-center px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors disabled:opacity-50"
+                >
+                  {formLoading && (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  )}
+                  <Save className="h-4 w-4 mr-2" />
+                  {editingProject ? 'Update Project' : 'Create Project'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -12,10 +12,9 @@ const ExperienceSchema = z.object({
     .string()
     .min(1, 'Role is required')
     .max(100, 'Role must be less than 100 characters'),
-  startDate: z.string().datetime('Must be a valid date'),
+  startDate: z.string().min(1, 'Start date is required'),
   endDate: z
     .string()
-    .datetime('Must be a valid date')
     .optional()
     .or(z.literal('')),
   description: z
@@ -95,10 +94,21 @@ export async function POST(request: NextRequest) {
     const validatedData = ExperienceSchema.parse(body);
 
     // Convert string dates to Date objects
+    const parseDate = (dateString: string) => {
+      if (!dateString) return null;
+      // Handle MM/DD/YYYY format
+      if (dateString.includes('/')) {
+        const [month, day, year] = dateString.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      // Handle other formats
+      return new Date(dateString);
+    };
+
     const dataWithDates = {
       ...validatedData,
-      startDate: new Date(validatedData.startDate),
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
+      startDate: parseDate(validatedData.startDate),
+      endDate: validatedData.endDate ? parseDate(validatedData.endDate) : null,
     };
 
     // Validate date logic
