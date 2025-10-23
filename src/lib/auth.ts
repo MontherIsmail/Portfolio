@@ -15,10 +15,13 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
+          console.log('Missing credentials');
           return null;
         }
 
         try {
+          console.log('Attempting to authenticate user:', credentials.email);
+          
           const user = await prisma.user.findUnique({
             where: {
               email: credentials.email,
@@ -26,6 +29,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
+            console.log('User not found:', credentials.email);
             return null;
           }
 
@@ -35,9 +39,11 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isPasswordValid) {
+            console.log('Invalid password for user:', credentials.email);
             return null;
           }
 
+          console.log('Authentication successful for user:', credentials.email);
           return {
             id: user.id,
             email: user.email,
@@ -78,7 +84,8 @@ export const authOptions: NextAuthOptions = {
     signIn: '/admin/login',
     error: '/admin/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
+  debug: process.env.NODE_ENV === 'development',
 };
 
 export default NextAuth(authOptions);

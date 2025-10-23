@@ -2,26 +2,58 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
-const UpdateSkillSchema = z.object({
+// Validation schemas
+const SkillSchema = z.object({
   name: z
     .string()
     .min(1, 'Name is required')
-    .max(50, 'Name must be less than 50 characters')
-    .optional(),
+    .max(50, 'Name must be less than 50 characters'),
   category: z
     .string()
     .min(1, 'Category is required')
-    .max(50, 'Category must be less than 50 characters')
-    .optional(),
+    .max(50, 'Category must be less than 50 characters'),
   level: z
     .number()
     .int()
     .min(1, 'Level must be at least 1')
-    .max(5, 'Level must be at most 5')
-    .optional(),
+    .max(5, 'Level must be at most 5'),
   iconUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  order: z.number().int().min(0, 'Order must be non-negative').optional(),
+  order: z
+    .number()
+    .int()
+    .min(0, 'Order must be non-negative')
+    .optional()
+    .default(0),
 });
+
+const UpdateSkillSchema = SkillSchema.partial();
+
+// GET /api/skills/[id] - Get single skill
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const skill = await prisma.skill.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!skill) {
+      return NextResponse.json(
+        { success: false, error: 'Skill not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: skill });
+  } catch (error) {
+    console.error('Error fetching skill:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch skill' },
+      { status: 500 }
+    );
+  }
+}
 
 // PUT /api/skills/[id] - Update skill
 export async function PUT(
@@ -44,16 +76,16 @@ export async function PUT(
       );
     }
 
-    // Check if skill with same name and category already exists (if name or category is being updated)
+    // Check if skill with same name and category already exists (excluding current)
     if (validatedData.name || validatedData.category) {
       const name = validatedData.name || existingSkill.name;
       const category = validatedData.category || existingSkill.category;
-
+      
       const duplicateSkill = await prisma.skill.findFirst({
         where: {
           name,
           category,
-          NOT: { id: params.id },
+          id: { not: params.id },
         },
       });
 

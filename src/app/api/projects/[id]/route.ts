@@ -2,12 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
-const UpdateProjectSchema = z.object({
+// Helper function to generate slug
+const generateSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
+// Validation schemas
+const ProjectSchema = z.object({
   title: z
     .string()
     .min(1, 'Title is required')
-    .max(100, 'Title must be less than 100 characters')
-    .optional(),
+    .max(100, 'Title must be less than 100 characters'),
   slug: z
     .string()
     .min(1, 'Slug is required')
@@ -16,19 +24,19 @@ const UpdateProjectSchema = z.object({
   description: z
     .string()
     .min(1, 'Description is required')
-    .max(1000, 'Description must be less than 1000 characters')
-    .optional(),
-  imageUrl: z.string().url('Must be a valid URL').optional(),
+    .max(1000, 'Description must be less than 1000 characters'),
+  imageUrl: z.string().url('Must be a valid URL'),
   link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   githubUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   technologies: z
-    .array(z.string())
-    .min(1, 'At least one technology is required')
-    .optional(),
-  featured: z.boolean().optional(),
+    .string()
+    .min(1, 'At least one technology is required'),
+  featured: z.boolean().optional().default(false),
 });
 
-// GET /api/projects/[id] - Get specific project
+const UpdateProjectSchema = ProjectSchema.partial();
+
+// GET /api/projects/[id] - Get single project
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -45,10 +53,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: project,
-    });
+    return NextResponse.json({ success: true, data: project });
   } catch (error) {
     console.error('Error fetching project:', error);
     return NextResponse.json(
@@ -79,10 +84,17 @@ export async function PUT(
       );
     }
 
-    // Check if slug already exists (if slug is being updated)
-    if (validatedData.slug && validatedData.slug !== existingProject.slug) {
-      const slugExists = await prisma.project.findUnique({
-        where: { slug: validatedData.slug },
+    // Generate slug if title is being updated
+    let slug = existingProject.slug;
+    if (validatedData.title && validatedData.title !== existingProject.title) {
+      slug = generateSlug(validatedData.title);
+      
+      // Check if new slug already exists
+      const slugExists = await prisma.project.findFirst({
+        where: { 
+          slug,
+          id: { not: params.id }
+        },
       });
 
       if (slugExists) {
@@ -95,7 +107,10 @@ export async function PUT(
 
     const updatedProject = await prisma.project.update({
       where: { id: params.id },
-      data: validatedData,
+      data: {
+        ...validatedData,
+        ...(slug !== existingProject.slug && { slug }),
+      },
     });
 
     return NextResponse.json({

@@ -1,8 +1,63 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ArrowDown, Github, Linkedin, Mail, Download } from 'lucide-react';
 
+type ProfileData = {
+  name: string;
+  title: string;
+  bio: string;
+  email: string;
+  phone: string;
+  location: string;
+  website: string;
+  github: string;
+  linkedin: string;
+  twitter: string;
+  profileImage: string;
+};
+
 export function HeroSection() {
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch('/api/profile', { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        if (res.ok) {
+          const json = await res.json();
+          setProfile(json?.data ?? null);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+  if (loading) {
+    return (
+      <section
+        id="home"
+        className="min-h-screen flex items-center justify-center bg-background-primary relative overflow-hidden pt-20"
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-400 mx-auto mb-4"></div>
+          <p className="text-text-secondary">Loading profile...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id="home"
@@ -27,18 +82,15 @@ export function HeroSection() {
               </div>
 
               <h1 className="text-5xl md:text-7xl font-bold text-text-primary mb-6 leading-tight">
-                <span className="block">Monther</span>
-                <span className="block text-primary-400">
-                  Alzamli
-                </span>
+                {profile?.name || 'Monther Alzamli'} 
               </h1>
 
               <div className="mb-8">
                 <h2 className="text-2xl md:text-3xl font-semibold text-text-primary mb-4">
-                  Full Stack Developer
+                  {profile?.title || 'Full Stack Developer'}
                 </h2>
                 <p className="text-lg md:text-xl text-text-secondary leading-relaxed max-w-2xl">
-                  I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.
+                  {profile?.bio || 'I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.'}
                 </p>
               </div>
 
@@ -62,33 +114,40 @@ export function HeroSection() {
 
               {/* Social Links */}
               <div className="flex items-center gap-6">
-                <span className="text-sm text-text-secondary font-medium">Follow me:</span>
+                <span className="text-sm text-text-secondary font-medium">
+                  Follow me:
+                </span>
                 <div className="flex gap-4">
-                  <a
-                    href="https://github.com/MontherIsmail"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/monther-alzamli/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
-                  </a>
-                  <a
-                    href="mailto:montherismail90@gmail.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    
-                    className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
-                  </a>
+                  {profile?.github && (
+                    <a
+                      href={profile.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                    >
+                      <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                    </a>
+                  )}
+                  {profile?.linkedin && (
+                    <a
+                      href={profile.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                    >
+                      <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                    </a>
+                  )}
+                  {profile?.email && (
+                    <a
+                      href={`mailto:${profile.email}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                    >
+                      <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -104,8 +163,8 @@ export function HeroSection() {
                       {/* Image container */}
                       <div className="w-full h-full rounded-2xl overflow-hidden bg-background-secondary">
                         <img
-                          src="/profile-image.jpg"
-                          alt="Monther Alzamli"
+                          src={profile?.profileImage || "/profile-image.jpg"}
+                          alt={profile?.name || "Monther Alzamli"}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -116,7 +175,10 @@ export function HeroSection() {
                   <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary-400 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
                     <span className="text-white font-bold text-lg">Dev</span>
                   </div>
-                  <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center shadow-lg animate-pulse" style={{ animationDelay: '1s' }}>
+                  <div
+                    className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center shadow-lg animate-pulse"
+                    style={{ animationDelay: '1s' }}
+                  >
                     <span className="text-white font-bold text-lg">Code</span>
                   </div>
                 </div>
@@ -136,7 +198,9 @@ export function HeroSection() {
                 href="#about"
                 className="group flex flex-col items-center text-text-secondary hover:text-primary-400 transition-colors duration-200"
               >
-                <span className="text-sm font-medium mb-2">Scroll to explore</span>
+                <span className="text-sm font-medium mb-2">
+                  Scroll to explore
+                </span>
                 <ArrowDown className="h-6 w-6 group-hover:translate-y-1 transition-transform duration-200" />
               </a>
             </div>

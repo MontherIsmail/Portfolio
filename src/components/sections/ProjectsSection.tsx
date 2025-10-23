@@ -1,3 +1,8 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { ExternalLink, Github, Calendar } from 'lucide-react';
+
 type Project = {
   id: string;
   title: string;
@@ -6,29 +11,47 @@ type Project = {
   imageUrl: string;
   link?: string | null;
   githubUrl?: string | null;
-  technologies: string[];
+  technologies: string;
   featured: boolean;
 };
 
-async function getProjects(): Promise<Project[]> {
-  try {
-    const res = await fetch('/api/projects?limit=6', { cache: 'no-store' });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data ?? [];
-  } catch {
-    return [];
-  }
-}
+export function ProjectsSection() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export async function ProjectsSection() {
-  const projects = await getProjects();
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects?limit=6', { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          setProjects(json?.data ?? []);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 bg-background-primary">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-400 mx-auto mb-4"></div>
+            <p className="text-text-secondary">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section
-      id="projects"
-      className="py-20 bg-background-primary"
-    >
+    <section id="projects" className="py-20 bg-background-primary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="inline-block">
@@ -46,9 +69,7 @@ export async function ProjectsSection() {
         {projects.length === 0 ? (
           <div className="text-center py-20">
             <div className="bg-background-secondary rounded-2xl p-8 max-w-md mx-auto border border-border-primary">
-              <p className="text-lg text-text-secondary">
-                No projects yet.
-              </p>
+              <p className="text-lg text-text-secondary">No projects yet.</p>
             </div>
           </div>
         ) : (
@@ -58,11 +79,14 @@ export async function ProjectsSection() {
                 key={p.id}
                 className="group bg-background-secondary rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-border-primary hover:border-primary-400 hover:-translate-y-2"
               >
-                <div className="aspect-video bg-background-primary flex items-center justify-center overflow-hidden">
+                <div className="aspect-video bg-background-primary flex items-center justify-center overflow-hidden relative">
                   <img
                     src={p.imageUrl}
                     alt={p.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
@@ -74,12 +98,12 @@ export async function ProjectsSection() {
                     {p.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {p.technologies.slice(0, 5).map(t => (
+                    {p.technologies.split(',').slice(0, 5).map(t => (
                       <span
-                        key={t}
+                        key={t.trim()}
                         className="px-3 py-1.5 bg-background-primary text-text-secondary text-sm rounded-full font-medium border border-border-primary"
                       >
-                        {t}
+                        {t.trim()}
                       </span>
                     ))}
                   </div>

@@ -27,16 +27,21 @@ export function Navigation() {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-background-secondary shadow-lg border-b border-border-primary' : 'bg-transparent'
+        scrolled
+          ? 'bg-background-secondary shadow-lg border-b border-border-primary'
+          : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#home" className={`text-2xl font-bold transition-colors duration-300 ${
-              scrolled ? 'text-text-primary' : 'text-text-primary'
-            }`}>
+            <a
+              href="#home"
+              className={`text-2xl font-bold transition-colors duration-300 ${
+                scrolled ? 'text-text-primary' : 'text-text-primary'
+              }`}
+            >
               Monther Alzamli
             </a>
           </div>
