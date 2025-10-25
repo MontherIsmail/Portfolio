@@ -78,10 +78,9 @@ async function seed() {
     for (const skill of skills) {
       await prisma.skill.upsert({
         where: { 
-          name_category: {
-            name: skill.name,
-            category: skill.category,
-          }
+          id: (await prisma.skill.findFirst({
+            where: { name: skill.name, category: skill.category }
+          }))?.id || 'temp-id'
         },
         update: skill,
         create: skill,
