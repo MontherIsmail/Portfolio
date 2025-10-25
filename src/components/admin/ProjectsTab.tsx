@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 import ImageUpload from './ImageUpload';
 import {
   Plus,
@@ -82,7 +83,7 @@ export default function ProjectsTab() {
         setProjects(data.data || []);
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      logger.error('Error fetching projects:', error);
     } finally {
       setLoading(false);
     }
@@ -195,7 +196,7 @@ export default function ProjectsTab() {
         });
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
+      logger.error('Error deleting project:', error);
     }
   };
 
@@ -309,7 +310,7 @@ export default function ProjectsTab() {
         confirmButtonColor: '#3b82f6'
       });
     } catch (error) {
-      console.error('Error deleting projects:', error);
+      logger.error('Error deleting projects:', error);
     } finally {
       setBulkLoading(false);
     }
@@ -342,49 +343,54 @@ export default function ProjectsTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-text-primary">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">
           Project Management
         </h2>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           {selectedProjects.length > 0 && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between sm:justify-start space-x-2 bg-background-secondary rounded-lg p-2 sm:p-0 sm:bg-transparent">
               <span className="text-sm text-text-secondary">
                 {selectedProjects.length} selected
               </span>
               <button
                 onClick={handleBulkDelete}
                 disabled={bulkLoading}
-                className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+                className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 text-sm"
               >
-                {bulkLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
+                {bulkLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+                <Trash2 className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Delete Selected</span>
+                <span className="sm:hidden">Delete</span>
               </button>
             </div>
           )}
-          <button
-            onClick={handleExportData}
-            className="flex items-center px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Project
-          </button>
+          <div className="flex gap-2 sm:gap-3">
+            <button
+              onClick={handleExportData}
+              className="flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors text-sm"
+            >
+              <Download className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
+              <span className="sm:hidden">Export</span>
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors text-sm"
+            >
+              <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Add New Project</span>
+              <span className="sm:hidden">Add Project</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-text-secondary" />
           <input
             type="text"
@@ -394,7 +400,7 @@ export default function ProjectsTab() {
             className="w-full pl-10 pr-4 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
           />
         </div>
-        <button className="flex items-center px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors">
+        <button className="flex items-center justify-center px-4 py-2 bg-background-secondary border border-border-primary text-text-primary rounded-lg hover:bg-background-primary transition-colors whitespace-nowrap">
           <Filter className="h-4 w-4 mr-2" />
           Filter
         </button>
@@ -476,24 +482,24 @@ export default function ProjectsTab() {
                   </span>
                 )}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
                 <button
                   onClick={() => handleEdit(project)}
-                  className="flex items-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors"
+                  className="flex items-center justify-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors flex-1 sm:flex-none"
                 >
                   <Edit className="h-3 w-3 mr-1" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(project.id)}
-                  className="flex items-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                  className="flex items-center justify-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors flex-1 sm:flex-none"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete
                 </button>
                 <button 
                   onClick={() => handleView(project)}
-                  className="flex items-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors"
+                  className="flex items-center justify-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors flex-1 sm:flex-none"
                 >
                   <Eye className="h-3 w-3 mr-1" />
                   View

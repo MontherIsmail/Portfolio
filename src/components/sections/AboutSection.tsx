@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 
 type ProfileData = {
   name: string;
@@ -29,7 +30,7 @@ export function AboutSection() {
           setProfile(json?.data ?? null);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        logger.error('Error fetching profile:', error);
       } finally {
         setLoading(false);
       }

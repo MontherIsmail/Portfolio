@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 // GET /api/analytics - Get analytics data
 export async function GET() {
@@ -80,7 +81,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: analyticsData });
   } catch (error) {
-    console.error('Error fetching analytics:', error);
+    logger.error('Error fetching analytics:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch analytics' },
       { status: 500 }

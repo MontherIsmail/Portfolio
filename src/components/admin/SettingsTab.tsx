@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 import {
   Save,
   Key,
@@ -50,7 +51,7 @@ export default function SettingsTab() {
         setSettingsData(data.data);
       }
     } catch (error) {
-      console.error('Error fetching settings:', error);
+      logger.error('Error fetching settings:', error);
       setError('Failed to load settings');
     } finally {
       setLoading(false);

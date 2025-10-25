@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import logger from '@/lib/logger';
 
 type ProfileData = {
   name: string;
@@ -35,7 +36,7 @@ export function ContactSection() {
           setProfile(json?.data ?? null);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        logger.error('Error fetching profile:', error);
       }
     };
 
@@ -58,7 +59,7 @@ export function ContactSection() {
     
     setStatus('loading');
     try {
-      console.log('Submitting contact form:', { name, email, message });
+      
       
       const res = await fetch('/api/contact', {
         method: 'POST',
@@ -66,9 +67,9 @@ export function ContactSection() {
         body: JSON.stringify({ name, email, message }),
       });
       
-      console.log('Response status:', res.status);
+      
       const responseData = await res.json();
-      console.log('Response data:', responseData);
+      
       
       if (!res.ok) {
         throw new Error(responseData.error || 'Failed to send message');
@@ -82,7 +83,7 @@ export function ContactSection() {
       // Show success message with Toastify
       toast.success('Thank you for your message. I\'ll get back to you soon!');
     } catch (error) {
-      console.error('Contact form error:', error);
+      logger.error('Contact form error:', error);
       setStatus('error');
       toast.error((error as Error).message || 'Failed to send message. Please try again.');
     }

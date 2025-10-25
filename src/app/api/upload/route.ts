@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImage, deleteImage, getImageInfo } from '@/lib/cloudinary';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 // POST /api/upload - Upload image to Cloudinary
 export async function POST(request: NextRequest) {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (dbError) {
-      console.error('Error saving image metadata to database:', dbError);
+      logger.error('Error saving image metadata to database:', dbError);
       // Continue even if database save fails
     }
 
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       message: 'Image uploaded successfully',
     });
   } catch (error) {
-    console.error('Upload API error:', error);
+    logger.error('Upload API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to upload image' },
       { status: 500 }
@@ -93,7 +94,7 @@ export async function DELETE(request: NextRequest) {
         where: { publicId: publicId },
       });
     } catch (dbError) {
-      console.error('Error removing image from database:', dbError);
+      logger.error('Error removing image from database:', dbError);
       // Continue even if database delete fails
     }
 
@@ -102,7 +103,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Image deleted successfully',
     });
   } catch (error) {
-    console.error('Delete API error:', error);
+    logger.error('Delete API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to delete image' },
       { status: 500 }
@@ -137,7 +138,7 @@ export async function GET(request: NextRequest) {
       data: result.data,
     });
   } catch (error) {
-    console.error('Get image info API error:', error);
+    logger.error('Get image info API error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to get image info' },
       { status: 500 }

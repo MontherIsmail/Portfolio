@@ -2,6 +2,7 @@ import NextAuth, { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import logger from '@/lib/logger';
 
 const prisma = new PrismaClient();
 
@@ -15,12 +16,12 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
-          console.log('Missing credentials');
+          
           return null;
         }
 
         try {
-          console.log('Attempting to authenticate user:', credentials.email);
+          
           
           const user = await prisma.user.findUnique({
             where: {
@@ -29,7 +30,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            console.log('User not found:', credentials.email);
+            
             return null;
           }
 
@@ -39,17 +40,17 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isPasswordValid) {
-            console.log('Invalid password for user:', credentials.email);
+            
             return null;
           }
 
-          console.log('Authentication successful for user:', credentials.email);
+          
           return {
             id: user.id,
             email: user.email,
           } as any;
         } catch (error) {
-          console.error('Authentication error:', error);
+          logger.error('Authentication error:', error);
           return null;
         }
       },

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 import { ExternalLink, Github, Calendar } from 'lucide-react';
 
 type Project = {
@@ -28,7 +29,7 @@ export function ProjectsSection() {
           setProjects(json?.data ?? []);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        logger.error('Error fetching projects:', error);
       } finally {
         setLoading(false);
       }

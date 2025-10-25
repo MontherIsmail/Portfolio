@@ -178,7 +178,7 @@ function OverviewTab() {
 
   const fetchStats = async () => {
     try {
-      console.log('Fetching dashboard stats...');
+      
       
       const [projectsRes, skillsRes, experienceRes, contactsRes] = await Promise.all([
         fetch('/api/projects', { 
@@ -211,14 +211,14 @@ function OverviewTab() {
         }),
       ]);
 
-      console.log('API responses:', { projectsRes, skillsRes, experienceRes, contactsRes });
+      
 
       const projectsData = await projectsRes.json();
       const skillsData = await skillsRes.json();
       const experienceData = await experienceRes.json();
       const contactsData = await contactsRes.json();
 
-      console.log('Parsed data:', { projectsData, skillsData, experienceData, contactsData });
+      
 
       // Calculate featured projects
       const featuredProjects = projectsData.data?.filter((project: any) => project.featured) || [];
@@ -274,12 +274,11 @@ function OverviewTab() {
         });
       }
 
-      console.log('Setting stats:', newStats);
+      
       setStats(newStats);
       setRecentActivity(activity);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Error fetching stats:', error);
       // Set fallback stats
       setStats({
         projects: 0,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 
 type Skill = {
   id: string;
@@ -24,7 +25,7 @@ export function SkillsSection() {
           setSkills(json?.data ?? []);
         }
       } catch (error) {
-        console.error('Error fetching skills:', error);
+        logger.error('Error fetching skills:', error);
       } finally {
         setLoading(false);
       }

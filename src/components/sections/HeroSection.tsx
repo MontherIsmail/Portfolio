@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowDown, Github, Linkedin, Mail, Download } from 'lucide-react';
+import { LoadingSpinner } from '@/components/LoadingComponents';
 
 type ProfileData = {
   name: string;
@@ -20,6 +21,7 @@ type ProfileData = {
 export function HeroSection() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,9 +36,11 @@ export function HeroSection() {
         if (res.ok) {
           const json = await res.json();
           setProfile(json?.data ?? null);
+        } else {
+          setError('Failed to load profile data');
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        setError('Network error occurred');
       } finally {
         setLoading(false);
       }
@@ -44,15 +48,37 @@ export function HeroSection() {
 
     fetchProfile();
   }, []);
+
   if (loading) {
     return (
       <section
         id="home"
         className="min-h-screen flex items-center justify-center bg-background-primary relative overflow-hidden pt-20"
+        aria-label="Loading profile information"
       >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-400 mx-auto mb-4"></div>
+          <LoadingSpinner size="lg" className="mx-auto mb-4" />
           <p className="text-text-secondary">Loading profile...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        id="home"
+        className="min-h-screen flex items-center justify-center bg-background-primary relative overflow-hidden pt-20"
+        aria-label="Profile loading error"
+      >
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </section>
     );
@@ -62,6 +88,7 @@ export function HeroSection() {
     <section
       id="home"
       className="min-h-screen flex items-center justify-center bg-background-primary relative overflow-hidden pt-20"
+      aria-label="Hero section with profile information"
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -98,17 +125,19 @@ export function HeroSection() {
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <a
                   href="#projects"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-primary-400 text-white font-semibold rounded-xl hover:bg-primary-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary-400/25"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-primary-400 text-white font-semibold rounded-xl hover:bg-primary-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary-400/25 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
+                  aria-label="View my projects and work portfolio"
                 >
                   <span>View My Work</span>
-                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200" />
+                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200" aria-hidden="true" />
                 </a>
                 <a
                   href="#contact"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-background-secondary text-text-primary font-semibold rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-background-secondary text-text-primary font-semibold rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
+                  aria-label="Contact me for collaboration or inquiries"
                 >
                   <span>Get In Touch</span>
-                  <Mail className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+                  <Mail className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
                 </a>
               </div>
 
@@ -123,9 +152,10 @@ export function HeroSection() {
                       href={profile.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
+                      aria-label="Visit my GitHub profile"
                     >
-                      <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                      <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
                     </a>
                   )}
                   {profile?.linkedin && (
@@ -133,9 +163,10 @@ export function HeroSection() {
                       href={profile.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
+                      aria-label="Visit my LinkedIn profile"
                     >
-                      <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                      <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
                     </a>
                   )}
                   {profile?.email && (
@@ -143,9 +174,10 @@ export function HeroSection() {
                       href={`mailto:${profile.email}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg"
+                      className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
+                      aria-label="Send me an email"
                     >
-                      <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                      <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
                     </a>
                   )}
                 </div>
@@ -164,8 +196,11 @@ export function HeroSection() {
                       <div className="w-full h-full rounded-2xl overflow-hidden bg-background-secondary">
                         <img
                           src={profile?.profileImage || "/profile-image.jpg"}
-                          alt={profile?.name || "Monther Alzamli"}
+                          alt={`Profile photo of ${profile?.name || "Monther Alzamli"}`}
                           className="w-full h-full object-cover"
+                          loading="eager"
+                          width="384"
+                          height="384"
                         />
                       </div>
                     </div>

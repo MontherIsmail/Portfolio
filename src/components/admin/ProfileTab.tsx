@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import ImageUpload from './ImageUpload';
+import logger from '@/lib/logger';
 import {
   Save,
   User,
@@ -81,7 +82,7 @@ export default function ProfileTab() {
         setProfileData(data.data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      logger.error('Error fetching profile:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Failed to load profile data',
@@ -157,7 +158,7 @@ export default function ProfileTab() {
         setAvailableImages([]);
       }
     } catch (error) {
-      console.error('Error fetching images:', error);
+      logger.error('Error fetching images:', error);
       // Don't show SweetAlert for this error, just set empty array
       setAvailableImages([]);
     } finally {

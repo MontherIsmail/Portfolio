@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 import {
   Plus,
   Edit,
@@ -76,7 +77,7 @@ export default function SkillsTab() {
         setSkills(data.data || []);
       }
     } catch (error) {
-      console.error('Error fetching skills:', error);
+      logger.error('Error fetching skills:', error);
     } finally {
       setLoading(false);
     }
@@ -180,7 +181,7 @@ export default function SkillsTab() {
         });
       }
     } catch (error) {
-      console.error('Error deleting skill:', error);
+      logger.error('Error deleting skill:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Failed to delete skill.',
@@ -263,7 +264,7 @@ export default function SkillsTab() {
         )
       );
     } catch (error) {
-      console.error('Error updating skill order:', error);
+      logger.error('Error updating skill order:', error);
       // Revert on error
       await fetchSkills();
     }

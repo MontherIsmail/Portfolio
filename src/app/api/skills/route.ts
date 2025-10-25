@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import logger from '@/lib/logger';
 
 // Validation schemas
 const SkillSchema = z.object({
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching skills:', error);
+    logger.error('Error fetching skills:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch skills' },
       { status: 500 }
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Error creating skill:', error);
+    logger.error('Error creating skill:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to create skill' },
       { status: 500 }

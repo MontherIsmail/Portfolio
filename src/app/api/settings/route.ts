@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import logger from '@/lib/logger';
 
 // Validation schema for settings
 const SettingsSchema = z.object({
@@ -31,7 +32,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: settingsData });
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    logger.error('Error fetching settings:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch settings' },
       { status: 500 }
@@ -71,7 +72,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    console.error('Error updating settings:', error);
+    logger.error('Error updating settings:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update settings' },
       { status: 500 }

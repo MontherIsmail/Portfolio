@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import logger from '@/lib/logger';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -69,7 +70,7 @@ export const uploadImage = async (
       },
     };
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    logger.error('Cloudinary upload error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Upload failed',
@@ -86,7 +87,7 @@ export const deleteImage = async (publicId: string) => {
       data: result,
     };
   } catch (error) {
-    console.error('Cloudinary delete error:', error);
+    logger.error('Cloudinary delete error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Delete failed',
@@ -123,7 +124,7 @@ export const getImageInfo = async (publicId: string) => {
       data: result,
     };
   } catch (error) {
-    console.error('Cloudinary get info error:', error);
+    logger.error('Cloudinary get info error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get image info',
