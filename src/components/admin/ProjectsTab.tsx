@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import ImageUpload from './ImageUpload';
 import {
   Plus,
   Edit,
@@ -60,6 +61,7 @@ export default function ProjectsTab() {
   const [formLoading, setFormLoading] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [viewingProject, setViewingProject] = useState<Project | null>(null);
 
   // Fetch projects
   useEffect(() => {
@@ -96,7 +98,6 @@ export default function ProjectsTab() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
-    setError('');
 
     try {
       const url = editingProject
@@ -212,6 +213,10 @@ export default function ProjectsTab() {
     setShowForm(true);
   };
 
+  const handleView = (project: Project) => {
+    setViewingProject(project);
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -224,7 +229,6 @@ export default function ProjectsTab() {
     });
     setEditingProject(null);
     setShowForm(false);
-    setError('');
   };
 
   const addTechnology = (tech: string) => {
@@ -487,7 +491,10 @@ export default function ProjectsTab() {
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete
                 </button>
-                <button className="flex items-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors">
+                <button 
+                  onClick={() => handleView(project)}
+                  className="flex items-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors"
+                >
                   <Eye className="h-3 w-3 mr-1" />
                   View
                 </button>
@@ -540,19 +547,18 @@ export default function ProjectsTab() {
 
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-2">
-                    Image URL *
+                    Project Image *
                   </label>
-                  <input
-                    type="url"
-                    required
-                    value={formData.imageUrl}
-                    onChange={e =>
+                  <ImageUpload
+                    onImageSelect={(url) =>
                       setFormData(prev => ({
                         ...prev,
-                        imageUrl: e.target.value,
+                        imageUrl: url,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-background-primary border border-border-primary rounded-lg text-text-primary focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                    currentImage={formData.imageUrl}
+                    folder="projects"
+                    showPreview={true}
                   />
                 </div>
               </div>
@@ -701,6 +707,138 @@ export default function ProjectsTab() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Project View Modal */}
+      {viewingProject && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background-secondary rounded-xl border border-border-primary w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-border-primary">
+              <h3 className="text-xl font-semibold text-text-primary">
+                Project Details
+              </h3>
+              <button
+                onClick={() => setViewingProject(null)}
+                className="text-text-secondary hover:text-text-primary"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Project Image */}
+              <div className="aspect-video bg-background-primary rounded-lg overflow-hidden">
+                <img
+                  src={viewingProject.imageUrl}
+                  alt={viewingProject.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                  }}
+                />
+              </div>
+
+              {/* Project Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-lg font-semibold text-text-primary mb-2">
+                    {viewingProject.title}
+                  </h4>
+                  {viewingProject.featured && (
+                    <span className="inline-block px-2 py-1 bg-primary-400 text-white text-xs rounded-full mb-3">
+                      Featured Project
+                    </span>
+                  )}
+                  <p className="text-text-secondary text-sm mb-4">
+                    {viewingProject.description}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Links */}
+                  <div className="space-y-2">
+                    {viewingProject.link && (
+                      <div>
+                        <label className="text-sm font-medium text-text-primary">Live Demo:</label>
+                        <a
+                          href={viewingProject.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-primary-400 hover:text-primary-300 text-sm break-all"
+                        >
+                          {viewingProject.link}
+                        </a>
+                      </div>
+                    )}
+                    {viewingProject.githubUrl && (
+                      <div>
+                        <label className="text-sm font-medium text-text-primary">GitHub:</label>
+                        <a
+                          href={viewingProject.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-primary-400 hover:text-primary-300 text-sm break-all"
+                        >
+                          {viewingProject.githubUrl}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Technologies */}
+                  <div>
+                    <label className="text-sm font-medium text-text-primary mb-2 block">
+                      Technologies:
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {viewingProject.technologies.split(',').map(tech => (
+                        <span
+                          key={tech.trim()}
+                          className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded"
+                        >
+                          {tech.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Project Metadata */}
+                  <div className="text-sm text-text-secondary space-y-1">
+                    <div>
+                      <span className="font-medium">Created:</span> {new Date(viewingProject.createdAt).toLocaleDateString()}
+                    </div>
+                    <div>
+                      <span className="font-medium">Last Updated:</span> {new Date(viewingProject.updatedAt).toLocaleDateString()}
+                    </div>
+                    <div>
+                      <span className="font-medium">Slug:</span> {viewingProject.slug}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-border-primary">
+                <button
+                  onClick={() => setViewingProject(null)}
+                  className="px-4 py-2 bg-background-primary border border-border-primary text-text-primary rounded-lg hover:bg-background-secondary transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setViewingProject(null);
+                    handleEdit(viewingProject);
+                  }}
+                  className="flex items-center px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Project
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

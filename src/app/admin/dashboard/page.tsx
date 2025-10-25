@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Mail,
+  Image,
 } from 'lucide-react';
 import ProjectsTab from '@/components/admin/ProjectsTab';
 import SkillsTab from '@/components/admin/SkillsTab';
@@ -22,6 +23,7 @@ import ProfileTab from '@/components/admin/ProfileTab';
 import AnalyticsTab from '@/components/admin/AnalyticsTab';
 import SettingsTab from '@/components/admin/SettingsTab';
 import ContactsTab from '@/components/admin/ContactsTab';
+import ImageGallery from '@/components/admin/ImageGallery';
 import NotificationContainer from '@/components/admin/NotificationContainer';
 
 const sidebarItems = [
@@ -31,6 +33,7 @@ const sidebarItems = [
   { id: 'experience', label: 'Experience', icon: Briefcase },
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'contacts', label: 'Messages', icon: Mail },
+  { id: 'images', label: 'Images', icon: Image },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
@@ -58,6 +61,8 @@ export default function AdminDashboard() {
         return <ProfileTab />;
       case 'contacts':
         return <ContactsTab />;
+      case 'images':
+        return <ImageGallery folder="portfolio" showUpload={true} showDelete={true} />;
       case 'analytics':
         return <AnalyticsTab />;
       case 'settings':
