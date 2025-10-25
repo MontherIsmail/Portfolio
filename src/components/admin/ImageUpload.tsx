@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Check } from 'lucide-react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 
 interface ImageUploadProps {
   onImageSelect: (imageUrl: string) => void;
@@ -97,7 +98,7 @@ export default function ImageUpload({
         throw new Error(result.error);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error('Upload error:', error);
       Swal.fire({
         title: 'Upload Failed!',
         text: error instanceof Error ? error.message : 'Failed to upload image',

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 import {
   Mail,
   Trash2,
@@ -40,7 +41,7 @@ export default function ContactsTab() {
 
   const fetchContacts = async () => {
     try {
-      console.log('Fetching contacts...');
+      
       const response = await fetch('/api/contacts', { 
         cache: 'no-store',
         headers: {
@@ -50,13 +51,13 @@ export default function ContactsTab() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched contacts:', data.data);
+        
         setContacts(data.data || []);
       } else {
-        console.error('Failed to fetch contacts:', response.status);
+        logger.error('Failed to fetch contacts:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching contacts:', error);
+      logger.error('Error fetching contacts:', error);
     } finally {
       setLoading(false);
     }
@@ -95,7 +96,7 @@ export default function ContactsTab() {
         });
       }
     } catch (error) {
-      console.error('Error updating contact:', error);
+      logger.error('Error updating contact:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Network error occurred.',
@@ -151,7 +152,7 @@ export default function ContactsTab() {
         });
       }
     } catch (error) {
-      console.error('Error deleting contact:', error);
+      logger.error('Error deleting contact:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Network error occurred.',
@@ -205,7 +206,7 @@ export default function ContactsTab() {
         confirmButtonColor: '#3b82f6'
       });
     } catch (error) {
-      console.error('Error bulk updating contacts:', error);
+      logger.error('Error bulk updating contacts:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Failed to update messages.',
@@ -254,7 +255,7 @@ export default function ContactsTab() {
         confirmButtonColor: '#3b82f6'
       });
     } catch (error) {
-      console.error('Error deleting contacts:', error);
+      logger.error('Error deleting contacts:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Failed to delete messages.',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 import {
   BarChart3,
   TrendingUp,
@@ -77,7 +78,7 @@ export default function AnalyticsTab() {
         setError('Failed to load analytics data');
       }
     } catch (error) {
-      console.error('Error fetching analytics:', error);
+      logger.error('Error fetching analytics:', error);
       setError('Network error occurred');
     } finally {
       setLoading(false);

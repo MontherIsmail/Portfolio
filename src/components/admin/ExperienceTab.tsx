@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 import {
   Plus,
   Edit,
@@ -59,7 +60,7 @@ export default function ExperienceTab() {
 
   const fetchExperiences = async () => {
     try {
-      console.log('Fetching experiences...');
+      
       const response = await fetch('/api/experience', { 
         cache: 'no-store',
         headers: {
@@ -69,13 +70,13 @@ export default function ExperienceTab() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched experiences:', data.data);
+        
         setExperiences(data.data || []);
       } else {
-        console.error('Failed to fetch experiences:', response.status);
+        logger.error('Failed to fetch experiences:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching experiences:', error);
+      logger.error('Error fetching experiences:', error);
     } finally {
       setLoading(false);
     }
@@ -109,11 +110,8 @@ export default function ExperienceTab() {
       });
 
       if (response.ok) {
-        console.log('Experience created/updated successfully');
-        // Reset form first
         resetForm();
         
-        // Show success message
         Swal.fire({
           title: 'Success!',
           text: editingExperience ? 'Experience updated successfully!' : 'Experience created successfully!',
@@ -127,7 +125,7 @@ export default function ExperienceTab() {
         
         // Then refresh the list
         setTimeout(async () => {
-          console.log('Refreshing experiences list...');
+          
           await fetchExperiences();
           // Trigger dashboard refresh
           window.dispatchEvent(new CustomEvent('refreshDashboard'));
@@ -192,7 +190,7 @@ export default function ExperienceTab() {
         });
       }
     } catch (error) {
-      console.error('Error deleting experience:', error);
+      logger.error('Error deleting experience:', error);
       Swal.fire({
         title: 'Error!',
         text: 'Failed to delete experience.',
@@ -253,36 +251,38 @@ export default function ExperienceTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-text-primary">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">
           Experience Management
         </h2>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           <button
             onClick={() => {
               setLoading(true);
               fetchExperiences();
             }}
-            className="flex items-center px-4 py-2 bg-background-secondary text-text-primary rounded-lg hover:bg-background-primary transition-colors border border-border-primary"
+            className="flex items-center justify-center px-3 sm:px-4 py-2 bg-background-secondary text-text-primary rounded-lg hover:bg-background-primary transition-colors border border-border-primary text-sm"
           >
-            <Loader2 className="h-4 w-4 mr-2" />
-            Refresh
+            <Loader2 className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Refresh</span>
           </button>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+            className="flex items-center justify-center px-3 sm:px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors text-sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Experience
+            <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Add New Experience</span>
+            <span className="sm:hidden">Add Experience</span>
           </button>
         </div>
       </div>
 
       {/* Search */}
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-text-secondary" />
           <input
             type="text"
@@ -305,54 +305,56 @@ export default function ExperienceTab() {
           .map((experience, index) => (
             <div
               key={experience.id}
-              className="bg-background-secondary rounded-xl border border-border-primary p-6"
+              className="bg-background-secondary rounded-xl border border-border-primary p-4 sm:p-6"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-4">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                <div className="flex items-start space-x-4 flex-1">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-primary-400 rounded-lg flex items-center justify-center">
-                      <Building2 className="h-6 w-6 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-400 rounded-lg flex items-center justify-center">
+                      <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold text-text-primary">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                      <h3 className="text-lg sm:text-xl font-semibold text-text-primary">
                         {experience.role}
                       </h3>
                       {experience.current && (
-                        <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                        <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full self-start">
                           Current
                         </span>
                       )}
                     </div>
-                    <p className="text-lg text-primary-400 font-medium mb-2">
+                    <p className="text-base sm:text-lg text-primary-400 font-medium mb-2">
                       {experience.company}
                     </p>
                     <div className="flex items-center text-text-secondary text-sm mb-3">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {formatDate(experience.startDate)} —{' '}
-                      {experience.current
-                        ? 'Present'
-                        : experience.endDate
-                          ? formatDate(experience.endDate)
-                          : 'N/A'}
+                      <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">
+                        {formatDate(experience.startDate)} —{' '}
+                        {experience.current
+                          ? 'Present'
+                          : experience.endDate
+                            ? formatDate(experience.endDate)
+                            : 'N/A'}
+                      </span>
                     </div>
-                    <p className="text-text-secondary leading-relaxed">
+                    <p className="text-text-secondary leading-relaxed text-sm sm:text-base">
                       {experience.description}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2 lg:flex-shrink-0">
                   <button
                     onClick={() => handleEdit(experience)}
-                    className="flex items-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors"
+                    className="flex items-center justify-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors flex-1 lg:flex-none"
                   >
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(experience.id)}
-                    className="flex items-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                    className="flex items-center justify-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors flex-1 lg:flex-none"
                   >
                     <Trash2 className="h-3 w-3 mr-1" />
                     Delete

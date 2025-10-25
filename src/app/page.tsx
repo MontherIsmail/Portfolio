@@ -6,18 +6,28 @@ import { ExperienceSection } from '@/components/sections/ExperienceSection';
 import { ContactSection } from '@/components/sections/ContactSection';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { StructuredData } from '@/components/StructuredData';
+import { ErrorBoundary } from '@/components/LoadingComponents';
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <Navigation />
-      <HeroSection />
-      <AboutSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ExperienceSection />
-      <ContactSection />
-      <Footer />
-    </main>
+    <ErrorBoundary>
+      <main className="min-h-screen">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <StructuredData />
+        <Navigation />
+        <div id="main-content">
+          <HeroSection />
+          <AboutSection />
+          <SkillsSection />
+          <ProjectsSection />
+          <ExperienceSection />
+          <ContactSection />
+        </div>
+        <Footer />
+      </main>
+    </ErrorBoundary>
   );
 }

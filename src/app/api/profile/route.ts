@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import logger from '@/lib/logger';
 
 // Validation schema for profile data
 const ProfileSchema = z.object({
@@ -52,7 +53,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: profile });
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    logger.error('Error fetching profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch profile' },
       { status: 500 }
@@ -87,7 +88,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    console.error('Error updating profile:', error);
+    logger.error('Error updating profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update profile' },
       { status: 500 }

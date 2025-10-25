@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import logger from '@/lib/logger';
 import { Calendar, MapPin, Briefcase } from 'lucide-react';
 
 type Experience = {
@@ -27,7 +28,7 @@ export function ExperienceSection() {
           setItems(json?.data ?? []);
         }
       } catch (error) {
-        console.error('Error fetching experience:', error);
+        logger.error('Error fetching experience:', error);
       } finally {
         setLoading(false);
       }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import logger from '@/lib/logger';
 
 // Validation schemas
 const ExperienceSchema = z.object({
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching experience:', error);
+    logger.error('Error fetching experience:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch experience' },
       { status: 500 }
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Error creating experience:', error);
+    logger.error('Error creating experience:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to create experience' },
       { status: 500 }

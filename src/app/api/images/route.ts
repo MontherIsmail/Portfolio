@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 // GET /api/images - List images from database
 export async function GET(request: NextRequest) {
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
       total: images.length,
     });
   } catch (error) {
-    console.error('Error fetching images:', error);
+    logger.error('Error fetching images:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch images' },
       { status: 500 }

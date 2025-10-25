@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 const ContactSchema = z.object({
   name: z.string().min(2).max(100),
@@ -10,15 +11,10 @@ const ContactSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('Contact API called');
     const body = await req.json();
-    console.log('Request body:', body);
-    
     const data = ContactSchema.parse(body);
-    console.log('Validated data:', data);
 
-    // Store contact message in database
-    const contact = await prisma.contact.create({
+    await prisma.contact.create({
       data: {
         name: data.name,
         email: data.email,
@@ -26,26 +22,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log('Contact message stored:', contact);
-
     return NextResponse.json(
       { success: true, message: 'Message sent successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Full error details:', error);
-    
     if (error instanceof z.ZodError) {
-      console.error('Validation error details:', error.issues);
       return NextResponse.json(
-        { success: false, error: 'Validation error', details: error.issues },
+        { success: false, error: 'Invalid input data', details: error.issues },
         { status: 400 }
       );
     }
     
-    console.error('Error storing contact message:', error);
+    logger.error('Error storing contact message:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to send message', details: error.message },
+      { success: false, error: 'Failed to send message' },
       { status: 500 }
     );
   }

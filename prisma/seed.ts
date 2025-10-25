@@ -1,11 +1,10 @@
 import { PrismaClient } from '@prisma/client';
+import logger from '@/lib/logger';
 
 const prisma = new PrismaClient();
 
 async function seed() {
   try {
-    console.log('🌱 Starting database seed...');
-
     // Create profile
     const profile = await prisma.profile.upsert({
       where: { id: 'singleton-profile-id' },
@@ -25,8 +24,6 @@ async function seed() {
         profileImage: '/profile-image.jpg',
       },
     });
-
-    console.log('✅ Profile created:', profile.name);
 
     // Create skills
     const skills = [
@@ -90,8 +87,6 @@ async function seed() {
         create: skill,
       });
     }
-
-    console.log('✅ Skills created:', skills.length);
 
     // Create projects
     const projects = [
@@ -185,8 +180,6 @@ async function seed() {
       });
     }
 
-    console.log('✅ Projects created:', projects.length);
-
     // Create experience
     const experiences = [
       {
@@ -233,11 +226,8 @@ async function seed() {
       });
     }
 
-    console.log('✅ Experience created:', experiences.length);
-
-    console.log('🎉 Database seeded successfully!');
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
+    logger.error('❌ Error seeding database:', error);
   } finally {
     await prisma.$disconnect();
   }

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { hashPassword } from '@/lib/password';
+import logger from '@/lib/logger';
 
 const prisma = new PrismaClient();
 
@@ -25,18 +26,9 @@ async function createAdminUser() {
       },
     });
 
-    console.log('Admin user created successfully:', {
-      id: adminUser.id,
-      email: adminUser.email,
-      createdAt: adminUser.createdAt,
-    });
 
-    console.log('\nLogin credentials:');
-    console.log('Email: admin@portfolio.com');
-    console.log('Password: admin123');
-    console.log('\nPlease change the password after first login!');
   } catch (error) {
-    console.error('Error creating admin user:', error);
+    logger.error('Error creating admin user:', error);
   } finally {
     await prisma.$disconnect();
   }

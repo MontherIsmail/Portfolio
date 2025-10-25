@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, Trash2, Eye, Download } from 'lucide-react';
 import Swal from 'sweetalert2';
+import logger from '@/lib/logger';
 
 interface ImageData {
   public_id: string;
@@ -52,7 +53,7 @@ export default function ImageGallery({
         throw new Error(result.error);
       }
     } catch (error) {
-      console.error('Error fetching images:', error);
+      logger.error('Error fetching images:', error);
     } finally {
       setLoading(false);
     }
@@ -124,7 +125,7 @@ export default function ImageGallery({
         throw new Error(result.error);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error('Upload error:', error);
       Swal.fire({
         title: 'Upload Failed!',
         text: error instanceof Error ? error.message : 'Failed to upload image',
@@ -186,7 +187,7 @@ export default function ImageGallery({
         throw new Error(deleteResult.error);
       }
     } catch (error) {
-      console.error('Delete error:', error);
+      logger.error('Delete error:', error);
       Swal.fire({
         title: 'Delete Failed!',
         text: error instanceof Error ? error.message : 'Failed to delete image',
@@ -241,7 +242,7 @@ export default function ImageGallery({
         confirmButtonColor: '#3b82f6'
       });
     } catch (error) {
-      console.error('Download error:', error);
+      logger.error('Download error:', error);
       Swal.fire({
         title: 'Download Failed!',
         text: 'Failed to download image',
