@@ -129,7 +129,11 @@ export async function POST(request: NextRequest) {
     }
 
     const experience = await prisma.experience.create({
-      data: dataWithDates,
+      data: {
+        ...dataWithDates,
+        startDate: dataWithDates.startDate!,
+        endDate: dataWithDates.endDate,
+      },
     });
 
     return NextResponse.json(
