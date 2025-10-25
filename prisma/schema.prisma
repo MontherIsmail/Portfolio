@@ -35,6 +35,8 @@ model Skill {
   level    Int
   iconUrl  String?
   order    Int     @default(0)
+  
+  @@unique([name, category], name: "name_category")
 }
 
 model Experience {
