@@ -6,12 +6,13 @@ import logger from '@/lib/logger';
 export async function GET() {
   try {
     // Get counts from database
-    const [projectsCount, skillsCount, experienceCount, contactsCount] = await Promise.all([
-      prisma.project.count(),
-      prisma.skill.count(),
-      prisma.experience.count(),
-      prisma.contact.count(),
-    ]);
+    const [projectsCount, skillsCount, experienceCount, contactsCount] =
+      await Promise.all([
+        prisma.project.count(),
+        prisma.skill.count(),
+        prisma.experience.count(),
+        prisma.contact.count(),
+      ]);
 
     // Get featured projects
     const featuredProjects = await prisma.project.findMany({
@@ -90,15 +91,19 @@ export async function GET() {
 }
 
 // Helper function to calculate duration between dates
-function calculateDuration(startDate: string, endDate: string | null, current: boolean): string {
+function calculateDuration(
+  startDate: string,
+  endDate: string | null,
+  current: boolean
+): string {
   const start = new Date(startDate);
-  const end = current ? new Date() : (endDate ? new Date(endDate) : new Date());
-  
+  const end = current ? new Date() : endDate ? new Date(endDate) : new Date();
+
   const diffTime = Math.abs(end.getTime() - start.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   const months = Math.floor(diffDays / 30);
   const years = Math.floor(months / 12);
-  
+
   if (years > 0) {
     return `${years} year${years > 1 ? 's' : ''} ${months % 12} month${months % 12 > 1 ? 's' : ''}`;
   } else if (months > 0) {

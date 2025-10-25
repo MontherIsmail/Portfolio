@@ -29,9 +29,7 @@ const ProjectSchema = z.object({
   imageUrl: z.string().url('Must be a valid URL'),
   link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   githubUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  technologies: z
-    .string()
-    .min(1, 'At least one technology is required'),
+  technologies: z.string().min(1, 'At least one technology is required'),
   featured: z.boolean().optional().default(false),
 });
 

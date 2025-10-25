@@ -34,7 +34,7 @@ export default function ImageUpload({
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
       return;
     }
@@ -47,7 +47,7 @@ export default function ImageUpload({
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
       return;
     }
@@ -90,9 +90,9 @@ export default function ImageUpload({
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
-        
+
         onImageSelect(result.data.secure_url);
       } else {
         throw new Error(result.error);
@@ -105,7 +105,7 @@ export default function ImageUpload({
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     } finally {
       setUploading(false);
@@ -123,7 +123,7 @@ export default function ImageUpload({
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setDragActive(false);
-    
+
     const file = event.dataTransfer.files[0];
     if (file) {
       handleFileUpload(file);
@@ -151,8 +151,8 @@ export default function ImageUpload({
       confirmButtonText: 'Yes, remove it!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
-    }).then((result) => {
+      background: '#1e293b',
+    }).then(result => {
       if (result.isConfirmed) {
         onImageSelect('');
       }
@@ -203,7 +203,9 @@ export default function ImageUpload({
         {uploading ? (
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-400 border-t-transparent mx-auto mb-4"></div>
-            <div className="text-text-primary font-medium mb-2">Uploading...</div>
+            <div className="text-text-primary font-medium mb-2">
+              Uploading...
+            </div>
             <div className="w-full bg-background-primary rounded-full h-2 mb-2">
               <div
                 className="bg-primary-400 h-2 rounded-full transition-all duration-300"
@@ -249,4 +251,3 @@ export default function ImageUpload({
     </div>
   );
 }
-

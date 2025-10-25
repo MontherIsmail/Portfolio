@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://montheralzamli.com'),
   title: {
     default: 'Monther Alzamli - Full Stack Developer & Software Engineer',
-    template: '%s | Monther Alzamli'
+    template: '%s | Monther Alzamli',
   },
   description:
-    "Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.",
+    'Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.',
   keywords: [
     'Monther Alzamli',
     'Full Stack Developer',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     url: 'https://montheralzamli.com',
     title: 'Monther Alzamli - Full Stack Developer & Software Engineer',
     description:
-      "Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.",
+      'Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.',
     siteName: 'Monther Alzamli Portfolio',
     images: [
       {
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Monther Alzamli - Full Stack Developer & Software Engineer',
     description:
-      "Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.",
+      'Experienced Full Stack Developer specializing in React, Next.js, Node.js, and modern web technologies. View my portfolio of innovative projects and professional experience.',
     images: ['/og-image.jpg'],
     creator: '@montheralzamli',
   },
@@ -107,13 +107,20 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1e293b" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
-      <body 
+      <body
         className={`${inter.className} antialiased`}
         suppressHydrationWarning={true}
       >

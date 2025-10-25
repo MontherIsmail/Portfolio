@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string || 'portfolio';
+    const folder = (formData.get('folder') as string) || 'portfolio';
 
     if (!file) {
       return NextResponse.json(
@@ -145,4 +145,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform the result to match our interface
-    const transformedImages = images.map((image) => ({
+    const transformedImages = images.map(image => ({
       public_id: image.publicId,
       secure_url: image.secureUrl,
       width: image.width,

@@ -48,7 +48,11 @@ interface StructuredDataProps {
   experiences?: Experience[];
 }
 
-export function StructuredData({ profile, projects = [], experiences = [] }: StructuredDataProps) {
+export function StructuredData({
+  profile,
+  projects = [],
+  experiences = [],
+}: StructuredDataProps) {
   const [structuredData, setStructuredData] = useState<any>(null);
 
   useEffect(() => {
@@ -67,11 +71,9 @@ export function StructuredData({ profile, projects = [], experiences = [] }: Str
         addressLocality: profile.location,
       },
       url: profile.website,
-      sameAs: [
-        profile.github,
-        profile.linkedin,
-        profile.twitter,
-      ].filter(Boolean),
+      sameAs: [profile.github, profile.linkedin, profile.twitter].filter(
+        Boolean
+      ),
       image: profile.profileImage,
       knowsAbout: [
         'React',
@@ -111,7 +113,7 @@ export function StructuredData({ profile, projects = [], experiences = [] }: Str
       description: profile.bio,
     };
 
-    const projectSchemas = projects.map((project) => ({
+    const projectSchemas = projects.map(project => ({
       '@context': 'https://schema.org',
       '@type': 'CreativeWork',
       name: project.title,
@@ -129,7 +131,7 @@ export function StructuredData({ profile, projects = [], experiences = [] }: Str
       inLanguage: 'en-US',
     }));
 
-    const experienceSchemas = experiences.map((exp) => ({
+    const experienceSchemas = experiences.map(exp => ({
       '@context': 'https://schema.org',
       '@type': 'OrganizationRole',
       roleName: exp.title,

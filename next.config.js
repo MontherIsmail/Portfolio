@@ -9,7 +9,12 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
-    domains: ['res.cloudinary.com', 'images.unsplash.com', 'via.placeholder.com', 'picsum.photos'],
+    domains: [
+      'res.cloudinary.com',
+      'images.unsplash.com',
+      'via.placeholder.com',
+      'picsum.photos',
+    ],
     remotePatterns: [
       {
         protocol: 'https',

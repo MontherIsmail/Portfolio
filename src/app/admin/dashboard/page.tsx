@@ -62,7 +62,13 @@ export default function AdminDashboard() {
       case 'contacts':
         return <ContactsTab />;
       case 'images':
-        return <ImageGallery folder="portfolio" showUpload={true} showDelete={true} />;
+        return (
+          <ImageGallery
+            folder="portfolio"
+            showUpload={true}
+            showDelete={true}
+          />
+        );
       case 'analytics':
         return <AnalyticsTab />;
       case 'settings':
@@ -75,7 +81,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background-primary">
       <NotificationContainer />
-      
+
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -169,62 +175,61 @@ function OverviewTab() {
   });
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [recentActivity, setRecentActivity] = useState<Array<{
-    id: string;
-    type: string;
-    message: string;
-    timestamp: string;
-  }>>([]);
+  const [recentActivity, setRecentActivity] = useState<
+    Array<{
+      id: string;
+      type: string;
+      message: string;
+      timestamp: string;
+    }>
+  >([]);
 
   const fetchStats = async () => {
     try {
-      
-      
-      const [projectsRes, skillsRes, experienceRes, contactsRes] = await Promise.all([
-        fetch('/api/projects', { 
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        }),
-        fetch('/api/skills', { 
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        }),
-        fetch('/api/experience', { 
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        }),
-        fetch('/api/contacts', { 
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        }),
-      ]);
-
-      
+      const [projectsRes, skillsRes, experienceRes, contactsRes] =
+        await Promise.all([
+          fetch('/api/projects', {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
+          }),
+          fetch('/api/skills', {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
+          }),
+          fetch('/api/experience', {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
+          }),
+          fetch('/api/contacts', {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
+          }),
+        ]);
 
       const projectsData = await projectsRes.json();
       const skillsData = await skillsRes.json();
       const experienceData = await experienceRes.json();
       const contactsData = await contactsRes.json();
 
-      
-
       // Calculate featured projects
-      const featuredProjects = projectsData.data?.filter((project: any) => project.featured) || [];
-      
+      const featuredProjects =
+        projectsData.data?.filter((project: any) => project.featured) || [];
+
       // Calculate unread messages
-      const unreadMessages = contactsData.data?.filter((contact: any) => !contact.read) || [];
+      const unreadMessages =
+        contactsData.data?.filter((contact: any) => !contact.read) || [];
 
       const newStats = {
         projects: projectsData.data?.length || 0,
@@ -237,44 +242,43 @@ function OverviewTab() {
 
       // Generate recent activity from real data
       const activity = [];
-      
+
       if (newStats.projects > 0) {
         activity.push({
           id: '1',
           type: 'projects',
           message: `${newStats.projects} projects available (${newStats.featuredProjects} featured)`,
-          timestamp: 'Just now'
+          timestamp: 'Just now',
         });
       }
-      
+
       if (newStats.skills > 0) {
         activity.push({
           id: '2',
           type: 'skills',
           message: `${newStats.skills} skills configured`,
-          timestamp: 'Just now'
+          timestamp: 'Just now',
         });
       }
-      
+
       if (newStats.experience > 0) {
         activity.push({
           id: '3',
           type: 'experience',
           message: `${newStats.experience} work experiences added`,
-          timestamp: 'Just now'
+          timestamp: 'Just now',
         });
       }
-      
+
       if (newStats.contacts > 0) {
         activity.push({
           id: '4',
           type: 'contacts',
           message: `${newStats.contacts} contact messages received (${newStats.unreadMessages} unread)`,
-          timestamp: 'Just now'
+          timestamp: 'Just now',
         });
       }
 
-      
       setStats(newStats);
       setRecentActivity(activity);
       setLastUpdated(new Date());
@@ -365,9 +369,7 @@ function OverviewTab() {
               <p className="text-2xl font-bold text-text-primary">
                 {stats.skills}
               </p>
-              <p className="text-green-400 text-sm mt-1">
-                Across categories
-              </p>
+              <p className="text-green-400 text-sm mt-1">Across categories</p>
             </div>
             <div className="p-3 bg-primary-400/20 rounded-lg">
               <Code className="h-6 w-6 text-primary-400" />
@@ -382,9 +384,7 @@ function OverviewTab() {
               <p className="text-2xl font-bold text-text-primary">
                 {stats.experience}
               </p>
-              <p className="text-orange-400 text-sm mt-1">
-                Work positions
-              </p>
+              <p className="text-orange-400 text-sm mt-1">Work positions</p>
             </div>
             <div className="p-3 bg-primary-400/20 rounded-lg">
               <Briefcase className="h-6 w-6 text-primary-400" />
@@ -417,12 +417,10 @@ function OverviewTab() {
         </h3>
         <div className="space-y-3">
           {recentActivity.length > 0 ? (
-            recentActivity.map((activity) => (
+            recentActivity.map(activity => (
               <div key={activity.id} className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-primary-400 rounded-full"></div>
-                <p className="text-text-secondary">
-                  {activity.message}
-                </p>
+                <p className="text-text-secondary">{activity.message}</p>
                 <span className="text-text-secondary text-sm">
                   {activity.timestamp}
                 </span>
@@ -431,17 +429,12 @@ function OverviewTab() {
           ) : (
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-              <p className="text-text-secondary">
-                No activity data available
-              </p>
-              <span className="text-text-secondary text-sm">
-                Just now
-              </span>
+              <p className="text-text-secondary">No activity data available</p>
+              <span className="text-text-secondary text-sm">Just now</span>
             </div>
           )}
         </div>
       </div>
-
     </div>
   );
 }

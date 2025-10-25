@@ -113,13 +113,15 @@ export default function SkillsTab() {
         // Show success message
         Swal.fire({
           title: 'Success!',
-          text: editingSkill ? 'Skill updated successfully!' : 'Skill created successfully!',
+          text: editingSkill
+            ? 'Skill updated successfully!'
+            : 'Skill created successfully!',
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       } else {
         const errorData = await response.json();
@@ -129,7 +131,7 @@ export default function SkillsTab() {
           icon: 'error',
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#ef4444'
+          confirmButtonColor: '#ef4444',
         });
       }
     } catch (error) {
@@ -139,7 +141,7 @@ export default function SkillsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     } finally {
       setFormLoading(false);
@@ -157,7 +159,7 @@ export default function SkillsTab() {
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -177,7 +179,7 @@ export default function SkillsTab() {
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       }
     } catch (error) {
@@ -188,7 +190,7 @@ export default function SkillsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
@@ -443,7 +445,6 @@ export default function SkillsTab() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-2">
                   Skill Name *

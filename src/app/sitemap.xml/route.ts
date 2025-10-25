@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 export async function GET(request: NextRequest) {
   try {
     const baseUrl = 'https://montheralzamli.com';
-    
+
     // Get dynamic content from database
     const [projects, experiences] = await Promise.all([
       prisma.project.findMany({
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     ];
 
     // Dynamic project pages
-    const projectPages = projects.map((project) => ({
+    const projectPages = projects.map(project => ({
       url: `/projects/${project.slug}`,
       lastModified: project.updatedAt.toISOString(),
       changeFrequency: 'monthly',
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${staticPages
     .map(
-      (page) => `
+      page => `
   <url>
     <loc>${baseUrl}${page.url}</loc>
     <lastmod>${page.lastModified}</lastmod>
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     .join('')}
   ${projectPages
     .map(
-      (page) => `
+      page => `
   <url>
     <loc>${baseUrl}${page.url}</loc>
     <lastmod>${page.lastModified}</lastmod>

@@ -5,27 +5,70 @@ import logger from '@/lib/logger';
 
 // Validation schema for profile data
 const ProfileSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  bio: z.string().min(1, 'Bio is required').max(1000, 'Bio must be less than 1000 characters'),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be less than 100 characters'),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  bio: z
+    .string()
+    .min(1, 'Bio is required')
+    .max(1000, 'Bio must be less than 1000 characters'),
   email: z.string().email('Must be a valid email'),
   phone: z.string().optional(),
   location: z.string().optional(),
-  website: z.string().optional().refine((val) => !val || val === '' || z.string().url().safeParse(val).success, {
-    message: 'Must be a valid URL or empty'
-  }),
-  github: z.string().optional().refine((val) => !val || val === '' || z.string().url().safeParse(val).success, {
-    message: 'Must be a valid URL or empty'
-  }),
-  linkedin: z.string().optional().refine((val) => !val || val === '' || z.string().url().safeParse(val).success, {
-    message: 'Must be a valid URL or empty'
-  }),
-  twitter: z.string().optional().refine((val) => !val || val === '' || z.string().url().safeParse(val).success, {
-    message: 'Must be a valid URL or empty'
-  }),
-  profileImage: z.string().optional().refine((val) => !val || val === '' || z.string().url().safeParse(val).success || val.startsWith('/'), {
-    message: 'Must be a valid URL or relative path'
-  }),
+  website: z
+    .string()
+    .optional()
+    .refine(
+      val => !val || val === '' || z.string().url().safeParse(val).success,
+      {
+        message: 'Must be a valid URL or empty',
+      }
+    ),
+  github: z
+    .string()
+    .optional()
+    .refine(
+      val => !val || val === '' || z.string().url().safeParse(val).success,
+      {
+        message: 'Must be a valid URL or empty',
+      }
+    ),
+  linkedin: z
+    .string()
+    .optional()
+    .refine(
+      val => !val || val === '' || z.string().url().safeParse(val).success,
+      {
+        message: 'Must be a valid URL or empty',
+      }
+    ),
+  twitter: z
+    .string()
+    .optional()
+    .refine(
+      val => !val || val === '' || z.string().url().safeParse(val).success,
+      {
+        message: 'Must be a valid URL or empty',
+      }
+    ),
+  profileImage: z
+    .string()
+    .optional()
+    .refine(
+      val =>
+        !val ||
+        val === '' ||
+        z.string().url().safeParse(val).success ||
+        val.startsWith('/'),
+      {
+        message: 'Must be a valid URL or relative path',
+      }
+    ),
 });
 
 // GET /api/profile - Get profile data from database (seed if missing)

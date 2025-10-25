@@ -25,8 +25,6 @@ async function createAdminUser() {
         password: hashedPassword,
       },
     });
-
-
   } catch (error) {
     logger.error('Error creating admin user:', error);
   } finally {

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     logger.error('Error storing contact message:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to send message' },

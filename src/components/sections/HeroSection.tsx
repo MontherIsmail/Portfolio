@@ -26,12 +26,12 @@ export function HeroSection() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('/api/profile', { 
+        const res = await fetch('/api/profile', {
           cache: 'no-store',
           headers: {
             'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
+            Pragma: 'no-cache',
+          },
         });
         if (res.ok) {
           const json = await res.json();
@@ -109,7 +109,7 @@ export function HeroSection() {
               </div>
 
               <h1 className="text-5xl md:text-7xl font-bold text-text-primary mb-6 leading-tight">
-                {profile?.name || 'Monther Alzamli'} 
+                {profile?.name || 'Monther Alzamli'}
               </h1>
 
               <div className="mb-8">
@@ -117,7 +117,8 @@ export function HeroSection() {
                   {profile?.title || 'Full Stack Developer'}
                 </h2>
                 <p className="text-lg md:text-xl text-text-secondary leading-relaxed max-w-2xl">
-                  {profile?.bio || 'I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.'}
+                  {profile?.bio ||
+                    'I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.'}
                 </p>
               </div>
 
@@ -129,7 +130,10 @@ export function HeroSection() {
                   aria-label="View my projects and work portfolio"
                 >
                   <span>View My Work</span>
-                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200" aria-hidden="true" />
+                  <ArrowDown
+                    className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200"
+                    aria-hidden="true"
+                  />
                 </a>
                 <a
                   href="#contact"
@@ -137,7 +141,10 @@ export function HeroSection() {
                   aria-label="Contact me for collaboration or inquiries"
                 >
                   <span>Get In Touch</span>
-                  <Mail className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
+                  <Mail
+                    className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200"
+                    aria-hidden="true"
+                  />
                 </a>
               </div>
 
@@ -155,7 +162,10 @@ export function HeroSection() {
                       className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
                       aria-label="Visit my GitHub profile"
                     >
-                      <Github className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
+                      <Github
+                        className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors"
+                        aria-hidden="true"
+                      />
                     </a>
                   )}
                   {profile?.linkedin && (
@@ -166,7 +176,10 @@ export function HeroSection() {
                       className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
                       aria-label="Visit my LinkedIn profile"
                     >
-                      <Linkedin className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
+                      <Linkedin
+                        className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors"
+                        aria-hidden="true"
+                      />
                     </a>
                   )}
                   {profile?.email && (
@@ -177,7 +190,10 @@ export function HeroSection() {
                       className="group p-3 bg-background-secondary rounded-xl border border-border-primary hover:border-primary-400 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary"
                       aria-label="Send me an email"
                     >
-                      <Mail className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors" aria-hidden="true" />
+                      <Mail
+                        className="h-6 w-6 text-text-secondary group-hover:text-primary-400 transition-colors"
+                        aria-hidden="true"
+                      />
                     </a>
                   )}
                 </div>
@@ -195,8 +211,8 @@ export function HeroSection() {
                       {/* Image container */}
                       <div className="w-full h-full rounded-2xl overflow-hidden bg-background-secondary">
                         <img
-                          src={profile?.profileImage || "/profile-image.jpg"}
-                          alt={`Profile photo of ${profile?.name || "Monther Alzamli"}`}
+                          src={profile?.profileImage || '/profile-image.jpg'}
+                          alt={`Profile photo of ${profile?.name || 'Monther Alzamli'}`}
                           className="w-full h-full object-cover"
                           loading="eager"
                           width="384"

@@ -85,8 +85,9 @@ export function ProjectsSection() {
                     src={p.imageUrl}
                     alt={p.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                    onError={e => {
+                      e.currentTarget.src =
+                        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -99,14 +100,17 @@ export function ProjectsSection() {
                     {p.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {p.technologies.split(',').slice(0, 5).map(t => (
-                      <span
-                        key={t.trim()}
-                        className="px-3 py-1.5 bg-background-primary text-text-secondary text-sm rounded-full font-medium border border-border-primary"
-                      >
-                        {t.trim()}
-                      </span>
-                    ))}
+                    {p.technologies
+                      .split(',')
+                      .slice(0, 5)
+                      .map(t => (
+                        <span
+                          key={t.trim()}
+                          className="px-3 py-1.5 bg-background-primary text-text-secondary text-sm rounded-full font-medium border border-border-primary"
+                        >
+                          {t.trim()}
+                        </span>
+                      ))}
                   </div>
                   <div className="flex gap-3">
                     {p.link && (

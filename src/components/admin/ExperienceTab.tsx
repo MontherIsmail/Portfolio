@@ -60,17 +60,16 @@ export default function ExperienceTab() {
 
   const fetchExperiences = async () => {
     try {
-      
-      const response = await fetch('/api/experience', { 
+      const response = await fetch('/api/experience', {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
+          Pragma: 'no-cache',
+        },
       });
       if (response.ok) {
         const data = await response.json();
-        
+
         setExperiences(data.data || []);
       } else {
         logger.error('Failed to fetch experiences:', response.status);
@@ -95,7 +94,7 @@ export default function ExperienceTab() {
 
       const experienceData = {
         ...formData,
-        endDate: formData.current ? '' : (formData.endDate || ''),
+        endDate: formData.current ? '' : formData.endDate || '',
         order: editingExperience
           ? editingExperience.order
           : experiences.length + 1,
@@ -111,21 +110,22 @@ export default function ExperienceTab() {
 
       if (response.ok) {
         resetForm();
-        
+
         Swal.fire({
           title: 'Success!',
-          text: editingExperience ? 'Experience updated successfully!' : 'Experience created successfully!',
+          text: editingExperience
+            ? 'Experience updated successfully!'
+            : 'Experience created successfully!',
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
-        
+
         // Then refresh the list
         setTimeout(async () => {
-          
           await fetchExperiences();
           // Trigger dashboard refresh
           window.dispatchEvent(new CustomEvent('refreshDashboard'));
@@ -138,7 +138,7 @@ export default function ExperienceTab() {
           icon: 'error',
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#ef4444'
+          confirmButtonColor: '#ef4444',
         });
       }
     } catch (error) {
@@ -148,7 +148,7 @@ export default function ExperienceTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     } finally {
       setFormLoading(false);
@@ -166,7 +166,7 @@ export default function ExperienceTab() {
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -186,7 +186,7 @@ export default function ExperienceTab() {
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       }
     } catch (error) {
@@ -197,7 +197,7 @@ export default function ExperienceTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
@@ -388,7 +388,6 @@ export default function ExperienceTab() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-2">

@@ -41,17 +41,16 @@ export default function ContactsTab() {
 
   const fetchContacts = async () => {
     try {
-      
-      const response = await fetch('/api/contacts', { 
+      const response = await fetch('/api/contacts', {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
+          Pragma: 'no-cache',
+        },
       });
       if (response.ok) {
         const data = await response.json();
-        
+
         setContacts(data.data || []);
       } else {
         logger.error('Failed to fetch contacts:', response.status);
@@ -83,7 +82,7 @@ export default function ContactsTab() {
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       } else {
         Swal.fire({
@@ -92,7 +91,7 @@ export default function ContactsTab() {
           icon: 'error',
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#ef4444'
+          confirmButtonColor: '#ef4444',
         });
       }
     } catch (error) {
@@ -103,7 +102,7 @@ export default function ContactsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
@@ -119,7 +118,7 @@ export default function ContactsTab() {
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -139,7 +138,7 @@ export default function ContactsTab() {
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       } else {
         Swal.fire({
@@ -148,7 +147,7 @@ export default function ContactsTab() {
           icon: 'error',
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#ef4444'
+          confirmButtonColor: '#ef4444',
         });
       }
     } catch (error) {
@@ -159,7 +158,7 @@ export default function ContactsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
@@ -203,7 +202,7 @@ export default function ContactsTab() {
         showConfirmButton: false,
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#3b82f6'
+        confirmButtonColor: '#3b82f6',
       });
     } catch (error) {
       logger.error('Error bulk updating contacts:', error);
@@ -213,14 +212,14 @@ export default function ContactsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedContacts.length === 0) return;
-    
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: `You are about to delete ${selectedContacts.length} message(s). This action cannot be undone!`,
@@ -231,7 +230,7 @@ export default function ContactsTab() {
       confirmButtonText: 'Yes, delete them!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -252,7 +251,7 @@ export default function ContactsTab() {
         showConfirmButton: false,
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#3b82f6'
+        confirmButtonColor: '#3b82f6',
       });
     } catch (error) {
       logger.error('Error deleting contacts:', error);
@@ -262,7 +261,7 @@ export default function ContactsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     }
   };
@@ -278,16 +277,16 @@ export default function ContactsTab() {
   };
 
   const filteredContacts = contacts.filter(contact => {
-    const matchesSearch = 
+    const matchesSearch =
       contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.message.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = 
+
+    const matchesFilter =
       filterRead === 'all' ||
       (filterRead === 'read' && contact.read) ||
       (filterRead === 'unread' && !contact.read);
-    
+
     return matchesSearch && matchesFilter;
   });
 
@@ -385,7 +384,9 @@ export default function ContactsTab() {
               <Square className="h-5 w-5" />
             )}
             <span className="text-sm">
-              {selectedContacts.length === filteredContacts.length ? 'Deselect All' : 'Select All'}
+              {selectedContacts.length === filteredContacts.length
+                ? 'Deselect All'
+                : 'Select All'}
             </span>
           </button>
         </div>
@@ -394,7 +395,9 @@ export default function ContactsTab() {
           <div className="text-center py-20">
             <div className="bg-background-secondary rounded-2xl p-8 max-w-md mx-auto border border-border-primary">
               <Mail className="h-16 w-16 text-text-secondary mx-auto mb-4" />
-              <p className="text-lg text-text-secondary">No contact messages found.</p>
+              <p className="text-lg text-text-secondary">
+                No contact messages found.
+              </p>
             </div>
           </div>
         ) : (
@@ -403,8 +406,8 @@ export default function ContactsTab() {
               <div
                 key={contact.id}
                 className={`bg-background-secondary rounded-xl border p-6 transition-all duration-200 ${
-                  contact.read 
-                    ? 'border-border-primary' 
+                  contact.read
+                    ? 'border-border-primary'
                     : 'border-primary-400 bg-primary-400/5'
                 }`}
               >
@@ -433,7 +436,9 @@ export default function ContactsTab() {
                     </span>
                     <div className="flex items-center space-x-1">
                       <button
-                        onClick={() => handleMarkAsRead(contact.id, !contact.read)}
+                        onClick={() =>
+                          handleMarkAsRead(contact.id, !contact.read)
+                        }
                         className={`p-2 rounded-lg transition-colors ${
                           contact.read
                             ? 'bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30'
@@ -441,7 +446,11 @@ export default function ContactsTab() {
                         }`}
                         title={contact.read ? 'Mark as unread' : 'Mark as read'}
                       >
-                        {contact.read ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {contact.read ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                       <button
                         onClick={() => handleDelete(contact.id)}

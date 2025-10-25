@@ -36,7 +36,7 @@ export const uploadImage = async (
     };
 
     let result;
-    
+
     // Handle Buffer uploads (from file uploads)
     if (Buffer.isBuffer(file)) {
       // Use upload_stream for buffer uploads
@@ -127,8 +127,8 @@ export const getImageInfo = async (publicId: string) => {
     logger.error('Cloudinary get info error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get image info',
+      error:
+        error instanceof Error ? error.message : 'Failed to get image info',
     };
   }
 };
-

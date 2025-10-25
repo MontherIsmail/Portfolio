@@ -71,18 +71,29 @@ export function Navigation() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="transition-colors duration-200 text-text-secondary hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-background-primary rounded p-2"
-              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-label={
+                isOpen ? 'Close navigation menu' : 'Open navigation menu'
+              }
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
-              {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+              {isOpen ? (
+                <X size={24} aria-hidden="true" />
+              ) : (
+                <Menu size={24} aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden" id="mobile-menu" role="menu" aria-label="Mobile navigation menu">
+          <div
+            className="md:hidden"
+            id="mobile-menu"
+            role="menu"
+            aria-label="Mobile navigation menu"
+          >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background-secondary rounded-lg mt-2 shadow-lg border border-border-primary">
               {navItems.map(item => (
                 <a

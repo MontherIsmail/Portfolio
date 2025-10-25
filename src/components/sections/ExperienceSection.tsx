@@ -22,7 +22,9 @@ export function ExperienceSection() {
   useEffect(() => {
     const fetchExperience = async () => {
       try {
-        const res = await fetch('/api/experience?limit=20', { cache: 'no-store' });
+        const res = await fetch('/api/experience?limit=20', {
+          cache: 'no-store',
+        });
         if (res.ok) {
           const json = await res.json();
           setItems(json?.data ?? []);

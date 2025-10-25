@@ -14,10 +14,7 @@ const ExperienceSchema = z.object({
     .min(1, 'Role is required')
     .max(100, 'Role must be less than 100 characters'),
   startDate: z.string().min(1, 'Start date is required'),
-  endDate: z
-    .string()
-    .optional()
-    .or(z.literal('')),
+  endDate: z.string().optional().or(z.literal('')),
   description: z
     .string()
     .min(1, 'Description is required')

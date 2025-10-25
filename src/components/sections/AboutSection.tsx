@@ -69,7 +69,8 @@ export function AboutSection() {
                   {profile?.name || 'Monther Alzamli'}
                 </h3>
                 <p className="text-lg text-text-secondary leading-relaxed mb-6">
-                  {profile?.bio || 'I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.'}
+                  {profile?.bio ||
+                    'I create beautiful, functional, and user-centered digital experiences using modern web technologies like React, Next.js, and TypeScript.'}
                 </p>
                 <div className="space-y-3">
                   {profile?.location && (
@@ -81,7 +82,10 @@ export function AboutSection() {
                   {profile?.email && (
                     <div className="flex items-center text-text-secondary">
                       <span className="font-medium mr-2">Email:</span>
-                      <a href={`mailto:${profile.email}`} className="text-primary-400 hover:text-primary-300 transition-colors">
+                      <a
+                        href={`mailto:${profile.email}`}
+                        className="text-primary-400 hover:text-primary-300 transition-colors"
+                      >
                         {profile.email}
                       </a>
                     </div>
@@ -89,7 +93,10 @@ export function AboutSection() {
                   {profile?.phone && (
                     <div className="flex items-center text-text-secondary">
                       <span className="font-medium mr-2">Phone:</span>
-                      <a href={`tel:${profile.phone}`} className="text-primary-400 hover:text-primary-300 transition-colors">
+                      <a
+                        href={`tel:${profile.phone}`}
+                        className="text-primary-400 hover:text-primary-300 transition-colors"
+                      >
                         {profile.phone}
                       </a>
                     </div>
@@ -97,7 +104,12 @@ export function AboutSection() {
                   {profile?.website && (
                     <div className="flex items-center text-text-secondary">
                       <span className="font-medium mr-2">Website:</span>
-                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 transition-colors">
+                      <a
+                        href={profile.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary-400 hover:text-primary-300 transition-colors"
+                      >
                         {profile.website}
                       </a>
                     </div>
@@ -110,8 +122,8 @@ export function AboutSection() {
                     <div className="w-full h-full bg-background-primary rounded-2xl p-2">
                       <div className="w-full h-full rounded-xl overflow-hidden bg-background-secondary">
                         <img
-                          src={profile?.profileImage || "/profile-image.jpg"}
-                          alt={profile?.name || "Monther Alzamli"}
+                          src={profile?.profileImage || '/profile-image.jpg'}
+                          alt={profile?.name || 'Monther Alzamli'}
                           className="w-full h-full object-cover"
                         />
                       </div>

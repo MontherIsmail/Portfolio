@@ -80,7 +80,7 @@ export async function PUT(
     if (validatedData.name || validatedData.category) {
       const name = validatedData.name || existingSkill.name;
       const category = validatedData.category || existingSkill.category;
-      
+
       const duplicateSkill = await prisma.skill.findFirst({
         where: {
           name,

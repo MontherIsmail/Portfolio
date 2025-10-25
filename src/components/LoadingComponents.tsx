@@ -14,7 +14,10 @@ interface ErrorBoundaryProps {
   fallback?: ReactNode;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -42,7 +45,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               Something went wrong
             </h2>
             <p className="text-text-secondary mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+              We're sorry, but something unexpected happened. Please try
+              refreshing the page.
             </p>
             <button
               onClick={() => window.location.reload()}
@@ -61,7 +65,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 // Loading Components
-export function LoadingSpinner({ size = 'md', className = '' }: { size?: 'sm' | 'md' | 'lg'; className?: string }) {
+export function LoadingSpinner({
+  size = 'md',
+  className = '',
+}: {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}) {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -69,13 +79,17 @@ export function LoadingSpinner({ size = 'md', className = '' }: { size?: 'sm' | 
   };
 
   return (
-    <div className={`animate-spin rounded-full border-2 border-primary-400 border-t-transparent ${sizeClasses[size]} ${className}`} />
+    <div
+      className={`animate-spin rounded-full border-2 border-primary-400 border-t-transparent ${sizeClasses[size]} ${className}`}
+    />
   );
 }
 
 export function LoadingCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-background-secondary rounded-xl border border-border-primary p-6 animate-pulse ${className}`}>
+    <div
+      className={`bg-background-secondary rounded-xl border border-border-primary p-6 animate-pulse ${className}`}
+    >
       <div className="space-y-4">
         <div className="h-4 bg-background-primary rounded w-3/4"></div>
         <div className="h-4 bg-background-primary rounded w-1/2"></div>
@@ -85,9 +99,17 @@ export function LoadingCard({ className = '' }: { className?: string }) {
   );
 }
 
-export function LoadingGrid({ count = 6, className = '' }: { count?: number; className?: string }) {
+export function LoadingGrid({
+  count = 6,
+  className = '',
+}: {
+  count?: number;
+  className?: string;
+}) {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+    <div
+      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
+    >
       {Array.from({ length: count }).map((_, i) => (
         <LoadingCard key={i} />
       ))}

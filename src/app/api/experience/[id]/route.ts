@@ -93,7 +93,10 @@ export async function PUT(
     // Validate date logic
     const startDate = dataWithDates.startDate || existingExperience.startDate;
     const endDate = dataWithDates.endDate || existingExperience.endDate;
-    const current = dataWithDates.current !== undefined ? dataWithDates.current : existingExperience.current;
+    const current =
+      dataWithDates.current !== undefined
+        ? dataWithDates.current
+        : existingExperience.current;
 
     if (endDate && endDate <= startDate) {
       return NextResponse.json(

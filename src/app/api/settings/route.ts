@@ -19,7 +19,7 @@ export async function GET() {
   try {
     // Get profile data for site settings
     const profile = await prisma.profile.findFirst();
-    
+
     const settingsData = {
       siteTitle: profile?.name || 'Portfolio',
       siteDescription: profile?.bio || 'A modern portfolio website',

@@ -45,47 +45,45 @@ export function ContactSection() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (name.length < 2) {
       toast.error('Name must be at least 2 characters long.');
       return;
     }
-    
+
     if (message.length < 10) {
       toast.error('Message must be at least 10 characters long.');
       return;
     }
-    
+
     setStatus('loading');
     try {
-      
-      
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message }),
       });
-      
-      
+
       const responseData = await res.json();
-      
-      
+
       if (!res.ok) {
         throw new Error(responseData.error || 'Failed to send message');
       }
-      
+
       setStatus('success');
       setName('');
       setEmail('');
       setMessage('');
-      
+
       // Show success message with Toastify
-      toast.success('Thank you for your message. I\'ll get back to you soon!');
+      toast.success("Thank you for your message. I'll get back to you soon!");
     } catch (error) {
       logger.error('Contact form error:', error);
       setStatus('error');
-      toast.error((error as Error).message || 'Failed to send message. Please try again.');
+      toast.error(
+        (error as Error).message || 'Failed to send message. Please try again.'
+      );
     }
   };
 
@@ -133,7 +131,10 @@ export function ContactSection() {
                       </div>
                       <div>
                         <p className="text-sm text-text-secondary">Email</p>
-                        <a href={`mailto:${profile.email}`} className="text-text-primary font-medium hover:text-primary-400 transition-colors">
+                        <a
+                          href={`mailto:${profile.email}`}
+                          className="text-text-primary font-medium hover:text-primary-400 transition-colors"
+                        >
                           {profile.email}
                         </a>
                       </div>
@@ -158,7 +159,10 @@ export function ContactSection() {
                       </div>
                       <div>
                         <p className="text-sm text-text-secondary">Phone</p>
-                        <a href={`tel:${profile.phone}`} className="text-text-primary font-medium hover:text-primary-400 transition-colors">
+                        <a
+                          href={`tel:${profile.phone}`}
+                          className="text-text-primary font-medium hover:text-primary-400 transition-colors"
+                        >
                           {profile.phone}
                         </a>
                       </div>
@@ -189,7 +193,9 @@ export function ContactSection() {
                       </div>
                       <div>
                         <p className="text-sm text-text-secondary">Location</p>
-                        <p className="text-text-primary font-medium">{profile.location}</p>
+                        <p className="text-text-primary font-medium">
+                          {profile.location}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -212,7 +218,12 @@ export function ContactSection() {
                       </div>
                       <div>
                         <p className="text-sm text-text-secondary">Website</p>
-                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-text-primary font-medium hover:text-primary-400 transition-colors">
+                        <a
+                          href={profile.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-text-primary font-medium hover:text-primary-400 transition-colors"
+                        >
                           {profile.website}
                         </a>
                       </div>

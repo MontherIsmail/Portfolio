@@ -71,12 +71,12 @@ export default function ProjectsTab() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('/api/projects', { 
+      const response = await fetch('/api/projects', {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
+          Pragma: 'no-cache',
+        },
       });
       if (response.ok) {
         const data = await response.json();
@@ -109,7 +109,9 @@ export default function ProjectsTab() {
 
       const submitData = {
         ...formData,
-        slug: editingProject ? editingProject.slug : generateSlug(formData.title),
+        slug: editingProject
+          ? editingProject.slug
+          : generateSlug(formData.title),
       };
 
       const response = await fetch(url, {
@@ -126,13 +128,15 @@ export default function ProjectsTab() {
         // Show success notification
         Swal.fire({
           title: 'Success!',
-          text: editingProject ? 'Project updated successfully!' : 'Project created successfully!',
+          text: editingProject
+            ? 'Project updated successfully!'
+            : 'Project created successfully!',
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       } else {
         const errorData = await response.json();
@@ -143,7 +147,7 @@ export default function ProjectsTab() {
           icon: 'error',
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#ef4444'
+          confirmButtonColor: '#ef4444',
         });
       }
     } catch (error) {
@@ -153,7 +157,7 @@ export default function ProjectsTab() {
         icon: 'error',
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#ef4444',
       });
     } finally {
       setFormLoading(false);
@@ -171,7 +175,7 @@ export default function ProjectsTab() {
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -192,7 +196,7 @@ export default function ProjectsTab() {
           showConfirmButton: false,
           color: '#e2e8f0',
           background: '#1e293b',
-          confirmButtonColor: '#3b82f6'
+          confirmButtonColor: '#3b82f6',
         });
       }
     } catch (error) {
@@ -234,7 +238,9 @@ export default function ProjectsTab() {
 
   const addTechnology = (tech: string) => {
     if (tech.trim()) {
-      const currentTechs = formData.technologies ? formData.technologies.split(',').map(t => t.trim()) : [];
+      const currentTechs = formData.technologies
+        ? formData.technologies.split(',').map(t => t.trim())
+        : [];
       if (!currentTechs.includes(tech.trim())) {
         const newTechs = [...currentTechs, tech.trim()];
         setFormData(prev => ({
@@ -246,7 +252,9 @@ export default function ProjectsTab() {
   };
 
   const removeTechnology = (tech: string) => {
-    const currentTechs = formData.technologies ? formData.technologies.split(',').map(t => t.trim()) : [];
+    const currentTechs = formData.technologies
+      ? formData.technologies.split(',').map(t => t.trim())
+      : [];
     const newTechs = currentTechs.filter(t => t !== tech);
     setFormData(prev => ({
       ...prev,
@@ -273,7 +281,7 @@ export default function ProjectsTab() {
 
   const handleBulkDelete = async () => {
     if (selectedProjects.length === 0) return;
-    
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: `You are about to delete ${selectedProjects.length} project(s). This action cannot be undone!`,
@@ -284,7 +292,7 @@ export default function ProjectsTab() {
       confirmButtonText: 'Yes, delete them!',
       cancelButtonText: 'Cancel',
       color: '#e2e8f0',
-      background: '#1e293b'
+      background: '#1e293b',
     });
 
     if (!result.isConfirmed) return;
@@ -307,7 +315,7 @@ export default function ProjectsTab() {
         showConfirmButton: false,
         color: '#e2e8f0',
         background: '#1e293b',
-        confirmButtonColor: '#3b82f6'
+        confirmButtonColor: '#3b82f6',
       });
     } catch (error) {
       logger.error('Error deleting projects:', error);
@@ -360,7 +368,9 @@ export default function ProjectsTab() {
                 disabled={bulkLoading}
                 className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 text-sm"
               >
-                {bulkLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+                {bulkLoading && (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                )}
                 <Trash2 className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Delete Selected</span>
                 <span className="sm:hidden">Delete</span>
@@ -420,94 +430,100 @@ export default function ProjectsTab() {
               <Square className="h-5 w-5" />
             )}
             <span className="text-sm">
-              {selectedProjects.length === filteredProjects.length ? 'Deselect All' : 'Select All'}
+              {selectedProjects.length === filteredProjects.length
+                ? 'Deselect All'
+                : 'Select All'}
             </span>
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProjects.map(project => (
-          <div
-            key={project.id}
-            className="bg-background-secondary rounded-xl border border-border-primary overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            <div className="aspect-video bg-background-primary relative">
-              <img
-                src={project.imageUrl}
-                alt={project.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
-                }}
-              />
-              <div className="absolute top-3 left-3">
-                <button
-                  onClick={() => handleSelectProject(project.id)}
-                  className="text-white hover:text-primary-400 transition-colors"
-                >
-                  {selectedProjects.includes(project.id) ? (
-                    <CheckSquare className="h-5 w-5" />
-                  ) : (
-                    <Square className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-lg font-semibold text-text-primary">
-                  {project.title}
-                </h3>
-                {project.featured && (
-                  <span className="px-2 py-1 bg-primary-400 text-white text-xs rounded-full">
-                    Featured
-                  </span>
-                )}
-              </div>
-              <p className="text-text-secondary text-sm mb-4 line-clamp-2">
-                {project.description}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.technologies.split(',').slice(0, 3).map(tech => (
-                  <span
-                    key={tech.trim()}
-                    className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded"
+          {filteredProjects.map(project => (
+            <div
+              key={project.id}
+              className="bg-background-secondary rounded-xl border border-border-primary overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="aspect-video bg-background-primary relative">
+                <img
+                  src={project.imageUrl}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                  onError={e => {
+                    e.currentTarget.src =
+                      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                  }}
+                />
+                <div className="absolute top-3 left-3">
+                  <button
+                    onClick={() => handleSelectProject(project.id)}
+                    className="text-white hover:text-primary-400 transition-colors"
                   >
-                    {tech.trim()}
-                  </span>
-                ))}
-                {project.technologies.split(',').length > 3 && (
-                  <span className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded">
-                    +{project.technologies.split(',').length - 3} more
-                  </span>
-                )}
+                    {selectedProjects.includes(project.id) ? (
+                      <CheckSquare className="h-5 w-5" />
+                    ) : (
+                      <Square className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
-                <button
-                  onClick={() => handleEdit(project)}
-                  className="flex items-center justify-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors flex-1 sm:flex-none"
-                >
-                  <Edit className="h-3 w-3 mr-1" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(project.id)}
-                  className="flex items-center justify-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors flex-1 sm:flex-none"
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  Delete
-                </button>
-                <button 
-                  onClick={() => handleView(project)}
-                  className="flex items-center justify-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors flex-1 sm:flex-none"
-                >
-                  <Eye className="h-3 w-3 mr-1" />
-                  View
-                </button>
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-text-primary">
+                    {project.title}
+                  </h3>
+                  {project.featured && (
+                    <span className="px-2 py-1 bg-primary-400 text-white text-xs rounded-full">
+                      Featured
+                    </span>
+                  )}
+                </div>
+                <p className="text-text-secondary text-sm mb-4 line-clamp-2">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.technologies
+                    .split(',')
+                    .slice(0, 3)
+                    .map(tech => (
+                      <span
+                        key={tech.trim()}
+                        className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded"
+                      >
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  {project.technologies.split(',').length > 3 && (
+                    <span className="px-2 py-1 bg-background-primary text-text-secondary text-xs rounded">
+                      +{project.technologies.split(',').length - 3} more
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
+                  <button
+                    onClick={() => handleEdit(project)}
+                    className="flex items-center justify-center px-3 py-1 bg-primary-400 text-white text-sm rounded hover:bg-primary-500 transition-colors flex-1 sm:flex-none"
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(project.id)}
+                    className="flex items-center justify-center px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors flex-1 sm:flex-none"
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => handleView(project)}
+                    className="flex items-center justify-center px-3 py-1 bg-background-primary border border-border-primary text-text-primary text-sm rounded hover:bg-background-secondary transition-colors flex-1 sm:flex-none"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    View
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
 
@@ -534,7 +550,6 @@ export default function ProjectsTab() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-2">
@@ -556,7 +571,7 @@ export default function ProjectsTab() {
                     Project Image *
                   </label>
                   <ImageUpload
-                    onImageSelect={(url) =>
+                    onImageSelect={url =>
                       setFormData(prev => ({
                         ...prev,
                         imageUrl: url,
@@ -625,23 +640,24 @@ export default function ProjectsTab() {
                   Technologies
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {formData.technologies.split(',').map(tech => (
-                    tech.trim() && (
-                      <span
-                        key={tech.trim()}
-                        className="flex items-center px-3 py-1 bg-primary-400 text-white rounded-full text-sm"
-                      >
-                        {tech.trim()}
-                        <button
-                          type="button"
-                          onClick={() => removeTechnology(tech.trim())}
-                          className="ml-2 hover:text-red-200"
+                  {formData.technologies.split(',').map(
+                    tech =>
+                      tech.trim() && (
+                        <span
+                          key={tech.trim()}
+                          className="flex items-center px-3 py-1 bg-primary-400 text-white rounded-full text-sm"
                         >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    )
-                  ))}
+                          {tech.trim()}
+                          <button
+                            type="button"
+                            onClick={() => removeTechnology(tech.trim())}
+                            className="ml-2 hover:text-red-200"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      )
+                  )}
                 </div>
                 <div className="flex space-x-2">
                   <input
@@ -740,8 +756,9 @@ export default function ProjectsTab() {
                   src={viewingProject.imageUrl}
                   alt={viewingProject.title}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+                  onError={e => {
+                    e.currentTarget.src =
+                      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
                   }}
                 />
               </div>
@@ -767,7 +784,9 @@ export default function ProjectsTab() {
                   <div className="space-y-2">
                     {viewingProject.link && (
                       <div>
-                        <label className="text-sm font-medium text-text-primary">Live Demo:</label>
+                        <label className="text-sm font-medium text-text-primary">
+                          Live Demo:
+                        </label>
                         <a
                           href={viewingProject.link}
                           target="_blank"
@@ -780,7 +799,9 @@ export default function ProjectsTab() {
                     )}
                     {viewingProject.githubUrl && (
                       <div>
-                        <label className="text-sm font-medium text-text-primary">GitHub:</label>
+                        <label className="text-sm font-medium text-text-primary">
+                          GitHub:
+                        </label>
                         <a
                           href={viewingProject.githubUrl}
                           target="_blank"
@@ -813,13 +834,16 @@ export default function ProjectsTab() {
                   {/* Project Metadata */}
                   <div className="text-sm text-text-secondary space-y-1">
                     <div>
-                      <span className="font-medium">Created:</span> {new Date(viewingProject.createdAt).toLocaleDateString()}
+                      <span className="font-medium">Created:</span>{' '}
+                      {new Date(viewingProject.createdAt).toLocaleDateString()}
                     </div>
                     <div>
-                      <span className="font-medium">Last Updated:</span> {new Date(viewingProject.updatedAt).toLocaleDateString()}
+                      <span className="font-medium">Last Updated:</span>{' '}
+                      {new Date(viewingProject.updatedAt).toLocaleDateString()}
                     </div>
                     <div>
-                      <span className="font-medium">Slug:</span> {viewingProject.slug}
+                      <span className="font-medium">Slug:</span>{' '}
+                      {viewingProject.slug}
                     </div>
                   </div>
                 </div>
