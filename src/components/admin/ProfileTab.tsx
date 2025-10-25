@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import ImageUpload from './ImageUpload';
 import {
   Save,
-  Upload,
   User,
   Mail,
   MapPin,
@@ -14,6 +14,9 @@ import {
   Linkedin,
   Twitter,
   Loader2,
+  Image,
+  X,
+  Check,
 } from 'lucide-react';
 
 interface ProfileData {
@@ -28,6 +31,15 @@ interface ProfileData {
   linkedin: string;
   twitter: string;
   profileImage: string;
+}
+
+interface CloudinaryImage {
+  public_id: string;
+  secure_url: string;
+  width: number;
+  height: number;
+  format: string;
+  bytes: number;
 }
 
 export default function ProfileTab() {
@@ -46,6 +58,9 @@ export default function ProfileTab() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showImageSelector, setShowImageSelector] = useState(false);
+  const [availableImages, setAvailableImages] = useState<CloudinaryImage[]>([]);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -129,19 +144,50 @@ export default function ProfileTab() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Create a preview URL
-      const reader = new FileReader();
-      reader.onload = event => {
-        setProfileData(prev => ({
-          ...prev,
-          profileImage: event.target?.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
+  const fetchAvailableImages = async () => {
+    try {
+      setLoadingImages(true);
+      const response = await fetch('/api/images?folder=portfolio&maxResults=50');
+      const result = await response.json();
+      
+      if (result.success) {
+        setAvailableImages(result.data);
+      } else {
+        // Don't show error for empty results, just set empty array
+        setAvailableImages([]);
+      }
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      // Don't show SweetAlert for this error, just set empty array
+      setAvailableImages([]);
+    } finally {
+      setLoadingImages(false);
     }
+  };
+
+  const handleImageSelect = (imageUrl: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      profileImage: imageUrl,
+    }));
+    setShowImageSelector(false);
+    
+    // Show success message after selecting image
+    Swal.fire({
+      title: 'Success!',
+      text: 'Profile image updated successfully!',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false,
+      color: '#e2e8f0',
+      background: '#1e293b',
+      confirmButtonColor: '#3b82f6'
+    });
+  };
+
+  const openImageSelector = () => {
+    setShowImageSelector(true);
+    fetchAvailableImages();
   };
 
   return (
@@ -163,31 +209,52 @@ export default function ProfileTab() {
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* Profile Image */}
-          <div className="flex items-center space-x-6">
-            <div className="relative">
-              <img
-                src={profileData.profileImage}
-                alt="Profile"
-                className="w-24 h-24 rounded-xl object-cover border-2 border-border-primary"
-              />
-              <label className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                <Upload className="h-6 w-6 text-white" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
-            </div>
+          <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-text-primary">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">
                 Profile Picture
               </h3>
-              <p className="text-sm text-text-secondary">
-                Click on the image to upload a new one
+              <p className="text-sm text-text-secondary mb-4">
+                Upload a new image or choose from your gallery
               </p>
             </div>
+            
+            {/* Current Image Preview */}
+            {profileData.profileImage && (
+              <div className="flex items-center space-x-4 mb-4">
+                <img
+                  src={profileData.profileImage}
+                  alt="Current Profile"
+                  className="w-20 h-20 rounded-lg object-cover border-2 border-border-primary"
+                />
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openImageSelector();
+                    }}
+                    className="px-3 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors flex items-center space-x-2"
+                  >
+                    <Image className="h-4 w-4" />
+                    <span>Choose from Gallery</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <ImageUpload
+              onImageSelect={(url) =>
+                setProfileData(prev => ({
+                  ...prev,
+                  profileImage: url,
+                }))
+              }
+              currentImage={profileData.profileImage}
+              folder="profile"
+              showPreview={false}
+              className="max-w-md"
+            />
           </div>
 
           {/* Basic Information */}
@@ -412,6 +479,75 @@ export default function ProfileTab() {
           </div>
         </form>
       </div>
+      )}
+
+      {/* Image Selector Modal */}
+      {showImageSelector && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-background-secondary rounded-xl max-w-4xl max-h-[90vh] overflow-hidden w-full">
+            <div className="flex items-center justify-between p-4 border-b border-border-primary">
+              <h3 className="text-lg font-semibold text-text-primary">Choose Profile Image</h3>
+              <button
+                onClick={() => setShowImageSelector(false)}
+                className="p-2 hover:bg-background-primary rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-text-secondary" />
+              </button>
+            </div>
+            
+            <div className="p-4 max-h-[70vh] overflow-y-auto">
+              {loadingImages ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-400 border-t-transparent"></div>
+                </div>
+              ) : availableImages.length === 0 ? (
+                <div className="text-center py-12">
+                  <Image className="h-12 w-12 text-text-secondary mx-auto mb-4" />
+                  <div className="text-text-secondary mb-2">No images found</div>
+                  <div className="text-sm text-text-secondary mb-4">
+                    Upload images in the Images tab first, then come back here to select one
+                  </div>
+                  <button
+                    onClick={() => setShowImageSelector(false)}
+                    className="px-4 py-2 bg-primary-400 text-white rounded-lg hover:bg-primary-500 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {availableImages.map((image) => (
+                    <div key={image.public_id} className="group relative">
+                      <div className="aspect-square bg-background-primary rounded-lg overflow-hidden border border-border-primary">
+                        <img
+                          src={image.secure_url}
+                          alt={image.public_id}
+                          className="w-full h-full object-cover"
+                        />
+                        
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            onClick={() => handleImageSelect(image.secure_url)}
+                            className="p-2 bg-primary-400/20 rounded-lg hover:bg-primary-400/30 transition-colors"
+                          >
+                            <Check className="h-6 w-6 text-white" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Image Info */}
+                      <div className="mt-2 text-xs text-text-secondary">
+                        <div>{image.width} × {image.height}</div>
+                        <div>{Math.round(image.bytes / 1024)}KB</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
