@@ -82,7 +82,7 @@ export async function PUT(
     }
 
     // Convert string dates to Date objects if provided
-    const dataWithDates = { ...validatedData };
+    const dataWithDates: any = { ...validatedData };
     if (validatedData.startDate) {
       dataWithDates.startDate = new Date(validatedData.startDate);
     }
