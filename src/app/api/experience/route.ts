@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
     // Validate date logic
     if (
       dataWithDates.endDate &&
+      dataWithDates.startDate &&
       dataWithDates.endDate <= dataWithDates.startDate
     ) {
       return NextResponse.json(
