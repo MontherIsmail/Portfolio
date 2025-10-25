@@ -70,7 +70,11 @@ export async function GET() {
         startDate: exp.startDate,
         endDate: exp.endDate,
         current: exp.current,
-        duration: calculateDuration(exp.startDate, exp.endDate, exp.current),
+        duration: calculateDuration(
+          exp.startDate.toISOString(),
+          exp.endDate?.toISOString() || '',
+          exp.current
+        ),
       })),
       projects: allProjects.map(project => ({
         id: project.id,
