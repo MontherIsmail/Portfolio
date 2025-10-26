@@ -61,12 +61,12 @@ export const uploadImage = async (
     return {
       success: true,
       data: {
-        public_id: result.public_id,
-        secure_url: result.secure_url,
-        width: result.width,
-        height: result.height,
-        format: result.format,
-        bytes: result.bytes,
+        public_id: (result as any).public_id,
+        secure_url: (result as any).secure_url,
+        width: (result as any).width,
+        height: (result as any).height,
+        format: (result as any).format,
+        bytes: (result as any).bytes,
       },
     };
   } catch (error) {

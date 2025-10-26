@@ -137,7 +137,6 @@ export default function RootLayout({
           pauseOnHover
           theme="dark"
           toastClassName="toast-container"
-          bodyClassName="toast-body"
         />
       </body>
     </html>

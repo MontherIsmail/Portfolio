@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
       prisma.experience.findMany({
         select: {
           id: true,
-          updatedAt: true,
         },
         orderBy: {
           order: 'asc',
