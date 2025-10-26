@@ -79,45 +79,25 @@ export function SkillsSection() {
                   </h3>
                   <div className="h-0.5 w-16 bg-primary-400 mx-auto rounded-full"></div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="flex flex-wrap gap-3 justify-center">
                   {skills
                     .filter(s => s.category === cat)
-                    .sort((a, b) => a.order - b.order || b.level - a.level)
+                    .sort((a, b) => a.order - b.order)
                     .map(s => (
                       <div
                         key={s.id}
-                        className="group/skill bg-background-secondary rounded-2xl p-6 border border-border-primary hover:border-primary-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        className="group/skill inline-flex items-center gap-2 px-4 py-2 bg-background-secondary rounded-full border border-border-primary hover:border-primary-400 hover:bg-primary-400/10 transition-all duration-300"
                       >
-                        <div className="flex items-center gap-3 mb-4">
-                          {s.iconUrl && (
-                            <div className="p-2 bg-background-primary rounded-xl">
-                              <img
-                                src={s.iconUrl}
-                                alt={s.name}
-                                className="h-6 w-6"
-                              />
-                            </div>
-                          )}
-                          <span className="text-text-primary font-semibold text-sm group-hover/skill:text-primary-400 transition-colors">
-                            {s.name}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-text-secondary font-medium">
-                              Proficiency
-                            </span>
-                            <span className="text-xs text-primary-400 font-bold">
-                              {s.level}/5
-                            </span>
-                          </div>
-                          <div className="h-2 bg-background-primary rounded-full overflow-hidden">
-                            <div
-                              className="h-2 bg-primary-400 rounded-full transition-all duration-1000 ease-out"
-                              style={{ width: `${(s.level / 5) * 100}%` }}
-                            />
-                          </div>
-                        </div>
+                        {s.iconUrl && (
+                          <img
+                            src={s.iconUrl}
+                            alt={s.name}
+                            className="h-5 w-5"
+                          />
+                        )}
+                        <span className="text-text-secondary font-medium text-sm group-hover/skill:text-primary-400 transition-colors">
+                          {s.name}
+                        </span>
                       </div>
                     ))}
                 </div>
