@@ -36,17 +36,19 @@ export async function POST(request: NextRequest) {
 
     // Save image metadata to database
     try {
-      await prisma.image.create({
-        data: {
-          publicId: result.data.public_id,
-          secureUrl: result.data.secure_url,
-          width: result.data.width,
-          height: result.data.height,
-          format: result.data.format,
-          bytes: result.data.bytes,
-          folder: folder,
-        },
-      });
+      if (result.data) {
+        await prisma.image.create({
+          data: {
+            publicId: result.data.public_id,
+            secureUrl: result.data.secure_url,
+            width: result.data.width,
+            height: result.data.height,
+            format: result.data.format,
+            bytes: result.data.bytes,
+            folder: folder,
+          },
+        });
+      }
     } catch (dbError) {
       logger.error('Error saving image metadata to database:', dbError);
       // Continue even if database save fails
