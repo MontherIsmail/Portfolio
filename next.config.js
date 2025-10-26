@@ -5,7 +5,6 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: true,
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['lucide-react'],
   },
   images: {
